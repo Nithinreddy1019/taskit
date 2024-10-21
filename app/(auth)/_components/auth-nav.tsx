@@ -28,7 +28,6 @@ export const AuthNav = () => {
             />
 
             <Button
-                size=""
                 onClick={hanldeNavigation}
             >
                 {pathname.includes("sign-in") ? "Sign up" : "Sign in"}
