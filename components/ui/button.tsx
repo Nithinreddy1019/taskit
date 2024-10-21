@@ -23,7 +23,7 @@ const buttonVariants = cva(
         tertiary: "bg-blue-100 text-blue-600 border-transparent focus:ring-2 focus:outline-none focus:ring-blue-200 hover:bg-blue-200/80",
       },
       size: {
-        default: "h-10 px-4 py-2",
+        default: "h-9 px-4 py-2",
         sm: "h-8 rounded-md px-3",
         xs: "h-7 rounded-md px-2 text-xs",
         lg: "h-12 rounded-md px-8",

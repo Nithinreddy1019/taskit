@@ -19,7 +19,7 @@ export const AuthNav = () => {
     }
 
     return (
-        <div className="w-full flex items-center justify-between px-4">
+        <div className="w-full flex items-center justify-between px-4 bg-neutral-100 rounded-xl p-4">
             <Image 
                 src={"./logo.svg"}
                 alt="logo"
@@ -28,7 +28,7 @@ export const AuthNav = () => {
             />
 
             <Button
-                size="sm"
+                size=""
                 onClick={hanldeNavigation}
             >
                 {pathname.includes("sign-in") ? "Sign up" : "Sign in"}
