@@ -10,9 +10,9 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "text-white bg-gradient-to-r from-cyan-700 to-blue-500 hover:bg-gradient-to-bl focus:ring-2 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2",
+          "text-white bg-gradient-to-r from-cyan-700 to-blue-500 hover:bg-gradient-to-bl focus:ring-2 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg text-sm px-5 py-2.5 text-center",
         destructive:
-          "text-white bg-gradient-to-r from-red-600 to-amber-600 hover:bg-gradient-to-bl focus:ring-2 focus:outline-none focus:ring-amber-300 dark:focus:ring-amber-800  rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2",
+          "text-white bg-gradient-to-r from-red-600 to-amber-600 hover:bg-gradient-to-bl focus:ring-2 focus:outline-none focus:ring-amber-300 dark:focus:ring-amber-800  rounded-lg text-sm px-5 py-2.5 text-center",
         outline:
           "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
         secondary:
@@ -23,7 +23,7 @@ const buttonVariants = cva(
         tertiary: "bg-blue-100 text-blue-600 border-transparent focus:ring-2 focus:outline-none focus:ring-blue-200 hover:bg-blue-200/80",
       },
       size: {
-        default: "h-10 px-4 py-2",
+        default: "h-9 px-4 py-2",
         sm: "h-8 rounded-md px-3",
         xs: "h-7 rounded-md px-2 text-xs",
         lg: "h-12 rounded-md px-8",
