@@ -10,9 +10,9 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "text-white bg-gradient-to-r from-cyan-700 to-blue-500 hover:bg-gradient-to-bl focus:ring-2 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2",
+          "text-white bg-gradient-to-r from-cyan-700 to-blue-500 hover:bg-gradient-to-bl focus:ring-2 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg text-sm px-5 py-2.5 text-center",
         destructive:
-          "text-white bg-gradient-to-r from-red-600 to-amber-600 hover:bg-gradient-to-bl focus:ring-2 focus:outline-none focus:ring-amber-300 dark:focus:ring-amber-800  rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2",
+          "text-white bg-gradient-to-r from-red-600 to-amber-600 hover:bg-gradient-to-bl focus:ring-2 focus:outline-none focus:ring-amber-300 dark:focus:ring-amber-800  rounded-lg text-sm px-5 py-2.5 text-center",
         outline:
           "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
         secondary:
