@@ -12,6 +12,14 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Taskit",
   description: "Manage your day and projects at one place",
+  icons: {
+    icon: [
+      {
+        url: "./logo.svg",
+        href: "./logo.svg"
+      }
+    ]
+  }
 };
 
 export default function RootLayout({

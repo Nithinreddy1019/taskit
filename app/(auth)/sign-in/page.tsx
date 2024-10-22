@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { SignInCard } from "@/features/auth/components/sign-in-card";
 
 const SigninPage = () => {
