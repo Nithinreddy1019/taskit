@@ -9,6 +9,7 @@ import {
 import {
     Form,
     FormControl,
+    FormDescription,
     FormLabel,
     FormMessage,
     FormItem,
@@ -17,26 +18,28 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { signInSchema } from "../schemas/signin-schema";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import { signUpSchema } from "../schemas/signup-schema";
+import Link from "next/link";
 import { AuthFooter } from "./auth-footer";
 
 
-export const SignInCard = () => {
+export const SignUpCard = () => {
 
-    const form = useForm<z.infer<typeof signInSchema>>({
-        resolver: zodResolver(signInSchema) ,
+    const form = useForm<z.infer<typeof signUpSchema>>({
+        resolver: zodResolver(signUpSchema) ,
         defaultValues: {
+            username: "",
             email: "",
-            password: ""
+            password: "",
         }
     });
 
-    const onSubmit = (values: z.infer<typeof signInSchema>) => {
+    const onSubmit = (values: z.infer<typeof signUpSchema>) => {
         console.log(values);
     }
 
@@ -44,8 +47,14 @@ export const SignInCard = () => {
         <Card className="w-full h-full p-4 shadow-none border-none">
             <CardHeader className="flex items-center justify-center">
                 <CardTitle className="text-2xl md:text-3xl">
-                    Welcome back!
+                    Sign up
                 </CardTitle>
+                <p className="text-center mx-auto text-sm">
+                    By signing up, you agree to our
+                    <span className="text-blue-500"><Link href={"/privacy"}>{'\u00A0'}Privacy policy</Link>{'\u00A0'}</span>
+                    and
+                    <span className="text-blue-500"><Link href={"/terms"}>{'\u00A0'}Terms of service</Link></span>
+                </p>
             </CardHeader>
             <div className="px-4">
                 <DottedSeparator />
@@ -54,6 +63,27 @@ export const SignInCard = () => {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-8">
                         <div className="space-y-4">
+                        <FormField 
+                                control={form.control}
+                                name="username"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Username
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input 
+                                                {...field}
+                                                type="text"
+                                                placeholder="Enter your username"
+                                                disabled={false}
+                                                className="focus-visible:ring-blue-500 text-blue-700/60"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField 
                                 control={form.control}
                                 name="email"
@@ -102,7 +132,7 @@ export const SignInCard = () => {
                             disabled={false}
                             className="w-full font-semibold"
                         >
-                            Sign in
+                            Sign up
                         </Button>
                     </form>
                 </Form>
@@ -130,9 +160,9 @@ export const SignInCard = () => {
                     <DottedSeparator />
 
                     <AuthFooter 
-                        footerText="Don't have an account?"
-                        footerLink="/sign-up"
-                        linkText="Sign Up"
+                        footerText="Already have an account?"
+                        footerLink="/sign-in"
+                        linkText="Sign In"
                     />
                 </div>
             </CardContent>

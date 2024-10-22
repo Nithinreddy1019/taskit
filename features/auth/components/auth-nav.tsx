@@ -19,7 +19,7 @@ export const AuthNav = () => {
     }
 
     return (
-        <div className="w-full flex items-center justify-between px-4 bg-neutral-100 rounded-xl p-4">
+        <div className="w-full flex items-center justify-between px-4 bg-neutral-100/60 rounded-xl p-4 sticky top-4 backdrop-blur-md">
             <Image 
                 src={"./logo.svg"}
                 alt="logo"
