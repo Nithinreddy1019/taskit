@@ -11,13 +11,19 @@ const app = new Hono()
         zValidator("json", signInSchema),
         async (c) => {
 
-            const some = await db.user.findFirst({
-                where: {
-                    email: "1@gmail.com"
-                }
-            });
+            const { email, password} = c.req.valid("json");
 
-            console.log(some);
+            const emailExists = await db.user.findUnique({
+                where: { email }
+            });
+            if(!emailExists) {
+                return c.json({ error: "Email does not exist"}, 411)
+            };
+
+            const passwordMatch = await bcrypt.compare(password, emailExists.password as string);
+            if(!passwordMatch) {
+                return c.json({ error: "Invalid credentials" }, 409)
+            };
 
             return c.json({ success: "ok" })
         }
