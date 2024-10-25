@@ -1,6 +1,6 @@
 "use client"
 
-import { PanelLeft } from "lucide-react"
+import { PanelLeft, PanelRight } from "lucide-react"
 import { Button } from "../ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet"
 import { Sidebar } from "./sidebar"
@@ -28,7 +28,7 @@ export const MobileSidebar = () => {
                     <PanelLeft className="size-5 text-neutral-700"/>
                 </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0">
+            <SheetContent side="left" className="p-0" Icon={PanelRight}>
                 <Sidebar />
             </SheetContent>
         </Sheet>
