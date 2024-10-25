@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import "./globals.css";
 import { QueryProvider } from "@/components/query-provider";
 import { Toaster } from "sonner";
+import { ThemeProvider } from "@/components/theme-provider";
+import { SessionProvider } from "next-auth/react";
 
 const inter = Inter({
   subsets: ["latin"]
@@ -34,10 +36,19 @@ export default function RootLayout({
       <body
         className={cn(inter.className, "antialiased")}
       >
-        <QueryProvider>
-          <Toaster />
-          {children}
-        </QueryProvider>
+        <SessionProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <QueryProvider>
+              <Toaster />
+              {children}
+            </QueryProvider>
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );
