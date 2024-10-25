@@ -1,5 +1,5 @@
 import { auth } from "@/auth"
-import { ApiAuthRoute, AuthRoutes, DEFAULT_REDIRECT, publicRoutes } from "./routes";
+import { ApiAuthRoute, AuthRoutes, DEFAULT_LOGIN_REDIRECT, publicRoutes } from "./routes";
 
 export default auth((req) => {
     const { nextUrl } = req;
@@ -14,7 +14,7 @@ export default auth((req) => {
 
     if(isAuthRoute) {
       if(isLoggedin) {
-        return Response.redirect(new URL(DEFAULT_REDIRECT, nextUrl));
+        return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
       }
       return;
     };

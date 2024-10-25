@@ -3,7 +3,7 @@ import { InferRequestType, InferResponseType } from "hono";
 
 import { client } from "@/lib/rpc";
 import { toast } from "sonner";
-import { DEFAULT_REDIRECT } from "@/routes";
+import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { signIn } from "next-auth/react";
 
 type Responsetype = InferResponseType<typeof client.api.authentication.login["$post"]>;
@@ -26,7 +26,7 @@ export const useLogin = () => {
         onSuccess: async (data, variables) => {
             await signIn("credentials", {
                 ...variables,
-                redirectTo: DEFAULT_REDIRECT
+                redirectTo: DEFAULT_LOGIN_REDIRECT
             })
             toast.success("Login successfull");
         },
