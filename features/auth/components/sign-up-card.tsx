@@ -25,9 +25,12 @@ import { FaGithub } from "react-icons/fa";
 import { signUpSchema } from "../schemas/signup-schema";
 import Link from "next/link";
 import { AuthFooter } from "./auth-footer";
+import { useRegister } from "../api/use-register";
 
 
 export const SignUpCard = () => {
+
+    const { mutate } = useRegister();
 
     const form = useForm<z.infer<typeof signUpSchema>>({
         resolver: zodResolver(signUpSchema) ,
@@ -40,6 +43,8 @@ export const SignUpCard = () => {
 
     const onSubmit = (values: z.infer<typeof signUpSchema>) => {
         console.log(values);
+
+        mutate(values);
     }
 
     return (

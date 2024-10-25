@@ -24,9 +24,12 @@ import { Button } from "@/components/ui/button";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { AuthFooter } from "./auth-footer";
+import { useLogin } from "../api/use-login";
 
 
 export const SignInCard = () => {
+
+    const { mutate } = useLogin()
 
     const form = useForm<z.infer<typeof signInSchema>>({
         resolver: zodResolver(signInSchema) ,
@@ -36,8 +39,9 @@ export const SignInCard = () => {
         }
     });
 
-    const onSubmit = (values: z.infer<typeof signInSchema>) => {
-        console.log(values);
+    const onSubmit = async (values: z.infer<typeof signInSchema>) => {
+        console.log(values)
+        mutate(values)
     }
 
     return (
