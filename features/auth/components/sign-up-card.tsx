@@ -26,9 +26,14 @@ import { signUpSchema } from "../schemas/signup-schema";
 import Link from "next/link";
 import { AuthFooter } from "./auth-footer";
 import { useRegister } from "../api/use-register";
+import { useTransition } from "react";
+
+import { FiLoader } from "react-icons/fi";
 
 
 export const SignUpCard = () => {
+
+    const [ isPending, startTransition ] = useTransition();
 
     const { mutate } = useRegister();
 
@@ -42,9 +47,9 @@ export const SignUpCard = () => {
     });
 
     const onSubmit = (values: z.infer<typeof signUpSchema>) => {
-        console.log(values);
-
-        mutate(values);
+        startTransition(() => {
+            mutate(values);
+        })
     }
 
     return (
@@ -80,7 +85,7 @@ export const SignUpCard = () => {
                                                 {...field}
                                                 type="text"
                                                 placeholder="Enter your username"
-                                                disabled={false}
+                                                disabled={isPending}
                                                 className="focus-visible:ring-blue-500 text-blue-700/60"
                                             />
                                         </FormControl>
@@ -101,7 +106,7 @@ export const SignUpCard = () => {
                                                 {...field}
                                                 type="email"
                                                 placeholder="Enter your email"
-                                                disabled={false}
+                                                disabled={isPending}
                                                 className="focus-visible:ring-blue-500 text-blue-700/60"
                                             />
                                         </FormControl>
@@ -122,7 +127,7 @@ export const SignUpCard = () => {
                                                 {...field}
                                                 type="password"
                                                 placeholder="Enter your password"
-                                                disabled={false}
+                                                disabled={isPending}
                                                 className="focus-visible:ring-blue-500 text-blue-700/60"
                                             />
                                         </FormControl>
@@ -133,10 +138,15 @@ export const SignUpCard = () => {
                         </div>
 
                         <Button
-                            disabled={false}
+                            disabled={isPending}
                             className="w-full font-semibold"
                         >
-                            Sign up
+                            {isPending ? (
+                                <div className="flex items-center gap-2">
+                                    <FiLoader className="size-4 animate-spin"/>
+                                    Signinup...
+                                </div>
+                            ) : ("Sign Up")}
                         </Button>
                     </form>
                 </Form>

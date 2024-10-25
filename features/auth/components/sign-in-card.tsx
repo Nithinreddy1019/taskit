@@ -25,9 +25,15 @@ import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { AuthFooter } from "./auth-footer";
 import { useLogin } from "../api/use-login";
+import { useTransition } from "react";
+
+import { FiLoader } from "react-icons/fi";
+
 
 
 export const SignInCard = () => {
+
+    const [isPending, startTransition] = useTransition();
 
     const { mutate } = useLogin()
 
@@ -40,8 +46,9 @@ export const SignInCard = () => {
     });
 
     const onSubmit = async (values: z.infer<typeof signInSchema>) => {
-        console.log(values)
-        mutate(values)
+        startTransition(() => {
+            mutate(values);
+        })
     }
 
     return (
@@ -71,7 +78,7 @@ export const SignInCard = () => {
                                                 {...field}
                                                 type="email"
                                                 placeholder="Enter your email"
-                                                disabled={false}
+                                                disabled={isPending}
                                                 className="focus-visible:ring-blue-500 text-blue-700/60"
                                             />
                                         </FormControl>
@@ -92,7 +99,7 @@ export const SignInCard = () => {
                                                 {...field}
                                                 type="password"
                                                 placeholder="Enter your password"
-                                                disabled={false}
+                                                disabled={isPending}
                                                 className="focus-visible:ring-blue-500 text-blue-700/60"
                                             />
                                         </FormControl>
@@ -103,10 +110,15 @@ export const SignInCard = () => {
                         </div>
 
                         <Button
-                            disabled={false}
+                            disabled={isPending}
                             className="w-full font-semibold"
                         >
-                            Sign in
+                            {isPending ? (
+                                <div className="flex items-center gap-2">
+                                    <FiLoader className="size-4 animate-spin"/>
+                                    Signinup...
+                                </div>
+                            ) : ("Sign Up")}
                         </Button>
                     </form>
                 </Form>
