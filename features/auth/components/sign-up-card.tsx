@@ -33,7 +33,7 @@ import { FiLoader } from "react-icons/fi";
 export const SignUpCard = () => {
 
 
-    const { mutate } = useRegister();
+    const { mutate, isPending } = useRegister();
 
     const form = useForm<z.infer<typeof signUpSchema>>({
         resolver: zodResolver(signUpSchema) ,
