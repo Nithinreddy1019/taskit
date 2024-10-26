@@ -1,9 +1,10 @@
+import { CreateWorkspaceForm } from "@/features/workspaces/components/create-workspace-form";
 
 
 const HomePage = () => {
     return (
         <div className="">
-            Home page
+            <CreateWorkspaceForm />
         </div>
     );
 }
