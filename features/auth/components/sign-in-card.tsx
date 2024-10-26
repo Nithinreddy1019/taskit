@@ -25,7 +25,6 @@ import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { AuthFooter } from "./auth-footer";
 import { useLogin } from "../api/use-login";
-import { useTransition } from "react";
 
 import { FiLoader } from "react-icons/fi";
 
@@ -33,9 +32,8 @@ import { FiLoader } from "react-icons/fi";
 
 export const SignInCard = () => {
 
-    const [isPending, startTransition] = useTransition();
 
-    const { mutate } = useLogin()
+    const { mutate, isPending } = useLogin()
 
     const form = useForm<z.infer<typeof signInSchema>>({
         resolver: zodResolver(signInSchema) ,
@@ -46,9 +44,7 @@ export const SignInCard = () => {
     });
 
     const onSubmit = async (values: z.infer<typeof signInSchema>) => {
-        startTransition(() => {
-            mutate(values);
-        })
+        mutate(values);
     }
 
     return (

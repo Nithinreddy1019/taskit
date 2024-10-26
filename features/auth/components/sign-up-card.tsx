@@ -26,14 +26,12 @@ import { signUpSchema } from "../schemas/signup-schema";
 import Link from "next/link";
 import { AuthFooter } from "./auth-footer";
 import { useRegister } from "../api/use-register";
-import { useTransition } from "react";
 
 import { FiLoader } from "react-icons/fi";
 
 
 export const SignUpCard = () => {
 
-    const [ isPending, startTransition ] = useTransition();
 
     const { mutate } = useRegister();
 
@@ -47,9 +45,7 @@ export const SignUpCard = () => {
     });
 
     const onSubmit = (values: z.infer<typeof signUpSchema>) => {
-        startTransition(() => {
-            mutate(values);
-        })
+        mutate(values);
     }
 
     return (
