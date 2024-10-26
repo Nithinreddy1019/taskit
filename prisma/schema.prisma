@@ -57,8 +57,9 @@ model VerificationToken {
 }
 
 model Workspace {
-  id   String @id @default(cuid())
-  name String
+  id    String  @id @default(cuid())
+  name  String
+  image String?
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
