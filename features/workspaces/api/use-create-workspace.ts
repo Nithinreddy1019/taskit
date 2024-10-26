@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InferRequestType, InferResponseType } from "hono";
 
 import { client } from "@/lib/rpc";
@@ -9,6 +9,8 @@ type RequestType = InferRequestType<typeof client.api.workspaces["$post"]>;
 
 
 export const useCreateWorkspace = () => {
+
+    const queryClient = useQueryClient();
 
     const mutation = useMutation<
         ResponseType,
@@ -23,7 +25,8 @@ export const useCreateWorkspace = () => {
             return await response.json();
         },
         onSuccess: () => {
-            toast.success("Workspace created")
+            toast.success("Workspace created");
+            queryClient.invalidateQueries({ queryKey: ["workspaces"] })
         },
         onError: (error) => {
             let errorMsg = "An error occured";
