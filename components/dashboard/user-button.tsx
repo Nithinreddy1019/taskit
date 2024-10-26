@@ -42,7 +42,7 @@ export const UserButton = () => {
                                 {theme === "system" && (<CheckIcon className="size-4 ml-2"/>)}
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => setTheme("light")}>
-                                <MonitorIcon className="size-5 mr-2"/>
+                                <SunIcon className="size-5 mr-2"/>
                                 Light
                                 {theme === "light" && (<CheckIcon className="size-4 ml-2"/>)}
                             </DropdownMenuItem>
