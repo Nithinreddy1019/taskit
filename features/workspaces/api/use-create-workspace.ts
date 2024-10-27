@@ -22,6 +22,7 @@ export const useCreateWorkspace = () => {
             if(!response.ok) {
                 throw new Error(JSON.stringify(await response.json()));
             }
+            
             return await response.json();
         },
         onSuccess: async () => {

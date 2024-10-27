@@ -8,6 +8,9 @@ import { QueryProvider } from "@/components/query-provider";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SessionProvider } from "next-auth/react";
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
+
+
 
 const inter = Inter({
   subsets: ["latin"]
@@ -36,19 +39,21 @@ export default function RootLayout({
       <body
         className={cn(inter.className, "antialiased")}
       >
-        <SessionProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <QueryProvider>
-              <Toaster />
-              {children}
-            </QueryProvider>
-          </ThemeProvider>
-        </SessionProvider>
+        <NuqsAdapter>
+          <SessionProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="light"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <QueryProvider>
+                <Toaster />
+                {children}
+              </QueryProvider>
+            </ThemeProvider>
+          </SessionProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

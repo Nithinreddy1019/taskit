@@ -30,6 +30,7 @@ import { createWorkspaceSchema } from "../schemas"
 import { ImageIcon, Loader } from "lucide-react";
 import { ChangeEvent, useRef } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 
 interface CreateWorkspaceFormProps {
@@ -40,6 +41,8 @@ interface CreateWorkspaceFormProps {
 export const CreateWorkspaceForm = ({
     onCancel,
 }: CreateWorkspaceFormProps) => {
+
+    const router = useRouter();
 
     const { isPending, mutate } = useCreateWorkspace();
 
@@ -60,8 +63,11 @@ export const CreateWorkspaceForm = ({
             image: values.image instanceof File ? values.image : ""
         };
         mutate({ form: finalValues }, {
-            onSuccess: () => {
+            onSuccess: (responseData) => {
                 form.reset();
+                if('data' in responseData) {
+                    router.push(`/workspaces/${responseData.data.id}`)
+                }
             }
         });
     };

@@ -92,7 +92,7 @@ const app = new Hono()
 
             try {
 
-                const workspace = db.$transaction(async (tx) => {
+                const workspace = await db.$transaction(async (tx) => {
 
                     const workspaceCreated = await tx.workspace.create({
                         data: {
