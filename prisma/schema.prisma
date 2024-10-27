@@ -24,6 +24,7 @@ model User {
   accounts      Account[]
 
   workspaces Workspace[]
+  members    Members[]
 }
 
 model Account {
@@ -60,7 +61,27 @@ model Workspace {
   id    String  @id @default(cuid())
   name  String
   image String?
+  inviteCode String
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
+
+  members Members[]
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+model Members {
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  role Role @default(MEMBER)
+
+  @@id(name: "memberId", [userId, workspaceId])
 }
