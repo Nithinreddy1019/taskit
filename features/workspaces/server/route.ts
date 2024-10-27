@@ -6,6 +6,8 @@ import { createWorkspaceSchema } from "../schemas";
 import { db } from "@/lib/db";
 import { bucketName, generateSignedUrl, isValidFileSize, randomImageName, s3Client } from "@/lib/s3";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { MemberRole } from "../types";
+import { generateInviteCode } from "@/lib/utils";
 
 const app = new Hono()
     .get("/",
@@ -15,11 +17,24 @@ const app = new Hono()
                 return c.json({ error: "Unauthorized"}, 401)
             };
 
-            const workspaces = await db.workspace.findMany({
+            // Query to find all workspaces user belongs to
+            const newList = await db.members.findMany({
                 where: {
-                    userId: session.user.id!
+                    userId: session.user?.id!
+                },
+                select: {
+                    workspace: {
+                        select: {
+                            id: true,
+                            name: true,
+                            userId: true,
+                            image: true
+                        }
+                    }
                 }
             });
+
+            const workspaces = newList.map((item) => item.workspace);
 
             const updatedWorkspaces = await Promise.all(workspaces.map(async (workspace) => {
                 if(workspace.image === null) {
@@ -76,13 +91,28 @@ const app = new Hono()
             
 
             try {
-                const workspace = await db.workspace.create({
-                    data: {
-                        name,
-                        userId: session.user?.id!,
-                        image: imageFileName === "" ? null : imageFileName
-                    }
-                });
+
+                const workspace = db.$transaction(async (tx) => {
+
+                    const workspace = await tx.workspace.create({
+                        data: {
+                            name,
+                            userId: session.user?.id!,
+                            image: imageFileName === "" ? null : imageFileName,
+                            inviteCode: generateInviteCode(6)
+                        }
+                    });
+
+                    const member = await tx.members.create({
+                        data: {
+                            userId: session.user?.id!,
+                            workspaceId: workspace.id,
+                            role: MemberRole.ADMIN
+                        }
+                    });
+
+                    return workspace;
+                })
 
                 return c.json({ data: workspace }, 200)
             } catch (error) {
