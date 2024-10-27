@@ -94,7 +94,7 @@ const app = new Hono()
 
                 const workspace = db.$transaction(async (tx) => {
 
-                    const workspace = await tx.workspace.create({
+                    const workspaceCreated = await tx.workspace.create({
                         data: {
                             name,
                             userId: session.user?.id!,
@@ -106,12 +106,12 @@ const app = new Hono()
                     const member = await tx.members.create({
                         data: {
                             userId: session.user?.id!,
-                            workspaceId: workspace.id,
+                            workspaceId: workspaceCreated.id,
                             role: MemberRole.ADMIN
                         }
                     });
 
-                    return workspace;
+                    return workspaceCreated;
                 })
 
                 return c.json({ data: workspace }, 200)
