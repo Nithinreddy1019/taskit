@@ -112,7 +112,7 @@ export const SignInCard = () => {
                             {isPending ? (
                                 <div className="flex items-center gap-2">
                                     <FiLoader className="size-4 animate-spin"/>
-                                    Signing ip...
+                                    Signing in...
                                 </div>
                             ) : ("Sign in")}
                         </Button>

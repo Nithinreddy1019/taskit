@@ -4,10 +4,41 @@ import { auth } from "@/auth";
 
 import { createWorkspaceSchema } from "../schemas";
 import { db } from "@/lib/db";
-import { bucketName, isValidFileSize, randomImageName, s3Client } from "@/lib/s3";
+import { bucketName, generateSignedUrl, isValidFileSize, randomImageName, s3Client } from "@/lib/s3";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 
 const app = new Hono()
+    .get("/",
+        async (c) => {
+            const session = await auth();
+            if(!session?.user) {
+                return c.json({ error: "Unauthorized"}, 401)
+            };
+
+            const workspaces = await db.workspace.findMany({
+                where: {
+                    userId: session.user.id!
+                }
+            });
+
+            const updatedWorkspaces = await Promise.all(workspaces.map(async (workspace) => {
+                if(workspace.image === null) {
+                    return {
+                        ...workspace,
+                        imageUrl: null
+                    }
+                }
+                const imageUrl = await generateSignedUrl(workspace.image);
+                return {
+                    ...workspace,
+                    imageUrl
+                }
+            }));
+
+            return c.json({ data: updatedWorkspaces }, 200)
+            
+        }
+    )
     .post(
         "/",
         zValidator("form", createWorkspaceSchema),
