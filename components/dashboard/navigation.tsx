@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 const routes = [
     {
         label: "Home",
-        href: "/",
+        href: "/home",
         icon: GoHome,
         activeIcon: GoHomeFill
     },

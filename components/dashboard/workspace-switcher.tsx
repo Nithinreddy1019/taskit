@@ -10,11 +10,20 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { WorkspaceAvatar } from "@/features/workspaces/components/workspace-avatar";
+import { useRouter } from "next/navigation";
+import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 
 
 export const WorkspaceSwitcher = () => {
 
+    const router = useRouter();
+
+    const workspaceId = useWorkspaceId();
     const { data: workspaces, isPending } = useGetWorkspaces();
+
+    const onSelect = (id: string) => {
+        router.push(`/workspaces/${id}`);
+    };
 
     return (
         <div className="flex flex-col gap-y-4">
@@ -23,7 +32,7 @@ export const WorkspaceSwitcher = () => {
                 <RiAddCircleFill className="size-4 text-neutral-500 cursor-pointer hover:opacity-75 transition"/>
             </div>
 
-            <Select>
+            <Select onValueChange={onSelect} value={workspaceId}>
                 <SelectTrigger className="w-full bg-neutral-200 dark:bg-black/30 font-medium p-1 focus:ring-0 ring-0 focus:outline-none border-none">
                     <SelectValue placeholder="No workspace selected" />
                 </SelectTrigger>
