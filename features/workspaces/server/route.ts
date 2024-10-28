@@ -2,9 +2,9 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { auth } from "@/auth";
 
-import { createWorkspaceSchema } from "../schemas";
+import { createWorkspaceSchema, updateWorkspaceSchema } from "../schemas";
 import { db } from "@/lib/db";
-import { bucketName, generateSignedUrl, isValidFileSize, randomImageName, s3Client } from "@/lib/s3";
+import { bucketName, deleteFromBucket, generateSignedUrl, isValidFileSize, putImageInBucket, randomImageName, s3Client } from "@/lib/s3";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { MemberRole } from "../types";
 import { generateInviteCode } from "@/lib/utils";
@@ -75,18 +75,25 @@ const app = new Hono()
                 };
 
                 imageFileName = await randomImageName();
-                const fileArrayBuffer = await image.arrayBuffer();
-                const fileBuffer = Buffer.from(fileArrayBuffer);
+                // const fileArrayBuffer = await image.arrayBuffer();
+                // const fileBuffer = Buffer.from(fileArrayBuffer);
 
-                const params = {
-                    Bucket: bucketName,
-                    Key: imageFileName,
-                    Body: fileBuffer,
-                    ContentType: image.type 
-                };
+                // const params = {
+                //     Bucket: bucketName,
+                //     Key: imageFileName,
+                //     Body: fileBuffer,
+                //     ContentType: image.type 
+                // };
 
-                const putCommand = new PutObjectCommand(params);
-                const uploadResponse = await s3Client.send(putCommand);
+                // const putCommand = new PutObjectCommand(params);
+                // const uploadResponse = await s3Client.send(putCommand);
+
+                /*
+                    Remove the above code after ensuriong func works fine
+                    WIP: 
+                */
+
+                const res = putImageInBucket(image, imageFileName);
             };
             
 
@@ -121,6 +128,69 @@ const app = new Hono()
 
         }
     )
+    .patch("/:workspaceId",
+        zValidator("form", updateWorkspaceSchema),
+        async (c) => {
+            const session = await auth();
+            
+            if(!session?.user) {
+                return c.json({ error: "Unauthorized"}, 401)
+            };
+
+            const { workspaceId } = c.req.param();
+            const { name, image } = c.req.valid("form");
+
+            const isMember = await db.members.findUnique({
+                where: {
+                    memberId: {
+                        userId: session.user.id!,
+                        workspaceId: workspaceId
+                    }
+                }
+            });
+
+            if(!isMember || isMember.role !== MemberRole.ADMIN) {
+                return c.json({ error: "Unauthorized" }, 401)
+            };
+
+            
+            const worksapce = await db.workspace.findUnique({
+                where: {
+                    id: workspaceId,
+                    userId: session.user.id!
+                }
+            });
+
+            if(!!worksapce && (worksapce.image !== null)) {
+                const res = await deleteFromBucket(worksapce.image);
+            };
+
+
+            let imageFileName = ""
+
+            if(image instanceof File) {
+                imageFileName = await randomImageName();
+                const uploadRes = await putImageInBucket(image as File, imageFileName)
+                if("error" in uploadRes) {
+                    return c.json({ error: "Image upload went wrong"}, 400)
+                }
+            }
+
+            const updatedWorkspace = await db.workspace.update({
+                where: {
+                    id: workspaceId,
+                    userId: session.user.id!
+                },
+                data: {
+                    name: name,
+                    image: imageFileName
+                }
+            });
+
+
+            return c.json({ data: updatedWorkspace }, 200);
+        }
+    );
 
 
 export default app;
