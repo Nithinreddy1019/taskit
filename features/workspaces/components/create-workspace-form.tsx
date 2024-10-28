@@ -31,6 +31,7 @@ import { ImageIcon, Loader } from "lucide-react";
 import { ChangeEvent, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 
 interface CreateWorkspaceFormProps {
@@ -175,6 +176,7 @@ export const CreateWorkspaceForm = ({
                                 variant="destructive"
                                 onClick={onCancel}
                                 disabled={isPending}
+                                className={cn(!onCancel && "hidden")}
                             >
                                 Cancel
                             </Button>
