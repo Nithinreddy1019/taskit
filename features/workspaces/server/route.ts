@@ -4,11 +4,9 @@ import { auth } from "@/auth";
 
 import { createWorkspaceSchema, updateWorkspaceSchema } from "../schemas";
 import { db } from "@/lib/db";
-import { bucketName, deleteFromBucket, generateSignedUrl, isValidFileSize, putImageInBucket, randomImageName, s3Client } from "@/lib/s3";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { deleteFromBucket, generateSignedUrl, isValidFileSize, putImageInBucket, randomImageName, s3Client } from "@/lib/s3";
 import { MemberRole } from "../types";
 import { generateInviteCode } from "@/lib/utils";
-import { string } from "zod";
 
 const app = new Hono()
     .get("/",
@@ -29,7 +27,8 @@ const app = new Hono()
                             id: true,
                             name: true,
                             userId: true,
-                            image: true
+                            image: true,
+                            inviteCode: true
                         }
                     }
                 }
@@ -214,7 +213,49 @@ const app = new Hono()
             return c.json({ data: updatedWorkspaceWithImage }, 200);
 
         }
-    );
+    )
+    .delete("/:workspaceId", 
+        async (c) => {
+            const session = await auth();
+            if(!session?.user) {
+                return c.json({ error: "Unauthorized" }, 401);
+            };
+
+            const { workspaceId } = c.req.param();
+
+            const isMember = await db.members.findUnique({
+                where: {
+                    memberId: {
+                        userId: session.user.id!,
+                        workspaceId: workspaceId
+                    }
+                }
+            });
+
+            if(!isMember || isMember.role !== MemberRole.ADMIN) {
+                return c.json({ error: "Unauthorized" }, 401)
+            };
+
+            const workspaceExists = await db.workspace.findUnique({
+                where: {
+                    id: workspaceId
+                }
+            });
+            if(workspaceExists && workspaceExists.image !== null) {
+                await deleteFromBucket(workspaceExists?.image!);
+            }
+
+            // TODO: Delete members, tasks and projects associated with it
+            await db.workspace.delete({
+                where: {
+                    id: workspaceId
+                }
+            });
+
+            return c.json({ data: { id: workspaceId }}, 200);
+
+        }
+    )
 
 
 export default app;
