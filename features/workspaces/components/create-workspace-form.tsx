@@ -151,16 +151,37 @@ export const CreateWorkspaceForm = ({
                                                     disabled={isPending}
                                                     onChange={handleImageChange}
                                                 />
-                                                <Button
-                                                    type="button"
-                                                    variant="tertiary"
-                                                    size="xs"
-                                                    disabled={isPending}
-                                                    className="mt-2 w-fit"
-                                                    onClick={() =>inputRef.current?.click()}
-                                                >
-                                                    Select image
-                                                </Button>
+                                                {field.value ? 
+                                                    (
+                                                        <Button
+                                                            type="button"
+                                                            variant="destructive"
+                                                            size="xs"
+                                                            disabled={isPending}
+                                                            className="mt-2 w-fit"
+                                                            onClick={() => {
+                                                                field.onChange(null);
+                                                                if(inputRef.current) {
+                                                                    inputRef.current.value = ""
+                                                                }
+                                                            }}
+                                                        >
+                                                            Remove image
+                                                        </Button>
+                                                    ) :
+                                                    (
+                                                        <Button
+                                                            type="button"
+                                                            variant="tertiary"
+                                                            size="xs"
+                                                            disabled={isPending}
+                                                            className="mt-2 w-fit"
+                                                            onClick={() =>inputRef.current?.click()}
+                                                        >
+                                                            Select image
+                                                        </Button>
+                                                    )
+                                                }
                                             </div>
                                         </div>
                                     </div>
