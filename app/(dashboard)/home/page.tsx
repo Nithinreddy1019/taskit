@@ -13,7 +13,7 @@ const HomePage = async () => {
     const { data } = await getWorkspacesAction();
 
     if(data?.length === 0) {
-        redirect("workspace/create")
+        redirect("workspaces/create")
     } else {
         // WIP: Is this how it should be
         redirect(`/workspaces/${data?.[0].id}`)

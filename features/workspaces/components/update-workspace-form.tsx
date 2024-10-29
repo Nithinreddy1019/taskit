@@ -24,31 +24,32 @@ import { DottedSeparator } from "@/components/dotted-separator";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod";
-import { useCreateWorkspace } from "../api/use-create-workspace";
 
 import { updateWorkspaceSchema } from "../schemas"
-import { ImageIcon, Loader } from "lucide-react";
+import { ImageIcon, Loader, Undo2 } from "lucide-react";
 import { ChangeEvent, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { WorkspaceType } from "../types";
+import { useUpdateWorkspace } from "../api/use-update-workspace";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 
 interface UpdateWorkspaceFormProps {
     onCancel?: () => void,
-    initialValues: WorkspaceType
+    initialValues: WorkspaceType,
 };
 
 
-export const CreateWorkspaceForm = ({
+export const UpdateWorkspaceForm = ({
     onCancel,
     initialValues
 }: UpdateWorkspaceFormProps) => {
 
     const router = useRouter();
 
-    const { isPending, mutate } = useCreateWorkspace();
+    const { isPending, mutate } = useUpdateWorkspace()
 
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -64,11 +65,16 @@ export const CreateWorkspaceForm = ({
 
         const finalValues = {
             ...values,
-            image: values.image instanceof File ? values.image : undefined
+            name: values.name as string,
+            image: values.image instanceof File ? values.image : values.image !== "" ? values.image : ""
         };
+
+        console.log("values are", values);
+        console.log(finalValues);
+
         mutate({ 
             form: finalValues, 
-            param: { workspaceID: initialValues.id}
+            param: { workspaceId: initialValues.id }
         }, {
             onSuccess: (responseData) => {
                 form.reset();
@@ -88,10 +94,27 @@ export const CreateWorkspaceForm = ({
 
     return (
         <Card className="w-full h-full border-none shadow-none">
-            <CardHeader className="flex p-6">
+            <CardHeader className="flex flex-row items-center gap-x-4 space-y-0 p-6">
                 <CardTitle className="text-xl font-semibold">
                     {initialValues.name}
                 </CardTitle>
+                <TooltipProvider>
+                    <Tooltip delayDuration={1}>
+                        <TooltipTrigger asChild>
+                            <Button
+                                variant="secondary"
+                                size="sm"
+                                className="px-1.5 py-0 h-[28px]"
+                                onClick={onCancel ? onCancel : () => router.push(`/workspaces/${initialValues.id}`)}
+                            >
+                                <Undo2 className="size-4" strokeWidth={3}/>
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>Go back</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
             </CardHeader>
             <div className="px-6">
                 <DottedSeparator />
@@ -197,7 +220,7 @@ export const CreateWorkspaceForm = ({
                                         <Loader className="h-4 w-4 mr-2 animate-spin"/>
                                         <p>Updating workspace...</p>
                                     </div>  
-                                ) : "                                Update workspace"}
+                                ) : "Update workspace"}
                             </Button>
                         </div>
                     </form>

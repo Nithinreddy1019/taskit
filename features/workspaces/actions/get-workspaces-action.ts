@@ -31,4 +31,4 @@ export const getWorkspacesAction = async () => {
 
     return { data: workspaces };
 
-}
+};
