@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { deleteFromBucket, generateSignedUrl, isValidFileSize, putImageInBucket, randomImageName, s3Client } from "@/lib/s3";
 import { MemberRole } from "../types";
 import { generateInviteCode } from "@/lib/utils";
+import { z } from "zod";
 
 const app = new Hono()
     .get("/",
@@ -291,6 +292,51 @@ const app = new Hono()
 
             return c.json({ data: updatedWorkspace }, 200)
 
+        }
+    )
+    .post (
+        "/:workspaceId/join",
+        zValidator("json", z.object({ code: z.string() })),
+        async (c) => {
+            const session = await auth();
+            if(!session?.user) {
+                return c.json({ error: "Unauthorized" }, 401);
+            };
+
+            const { workspaceId } = c.req.param();
+            const { code } = c.req.valid("json");
+
+            const isMember = await db.members.findUnique({
+                where: {
+                    memberId: {
+                        userId: session.user.id!,
+                        workspaceId: workspaceId
+                    }
+                }
+            });
+
+            if(isMember) {
+                return c.json({ error: "Already a member" }, 409);
+            };
+
+            const workspace = await db.workspace.findUnique({
+                where: {
+                    id: workspaceId
+                }
+            });
+
+            if(workspace?.inviteCode !== code) {
+                return c.json({ error: "Incorrect invite code"}, 409)
+            };
+
+            await db.members.create({
+                data: {
+                    userId: session.user.id!,
+                    workspaceId: workspaceId
+                }
+            });
+
+            return c.json({ data: workspace }, 200);
         }
     )
 
