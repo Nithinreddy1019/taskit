@@ -65,7 +65,7 @@ export const useConfirm = (
                             size="sm"
                             className="w-full lg:w-auto"
                         >
-                            Confirm delete    
+                            Confirm
                         </Button>
                     </div>
                 </CardContent>

@@ -26,7 +26,7 @@ import { useForm } from "react-hook-form"
 import * as z from "zod";
 
 import { updateWorkspaceSchema } from "../schemas"
-import { ImageIcon, Loader, Undo2 } from "lucide-react";
+import { Copy, ImageIcon, Loader, Undo2 } from "lucide-react";
 import { ChangeEvent, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -36,6 +36,8 @@ import { useUpdateWorkspace } from "../api/use-update-workspace";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useDeleteWorkspace } from "../api/use-delete-workspace";
+import { toast } from "sonner";
+import { useResetInviteCode } from "../api/use-reset-invite-code";
 
 
 interface UpdateWorkspaceFormProps {
@@ -55,11 +57,20 @@ export const UpdateWorkspaceForm = ({
         mutate: deleteWorkspace, 
         isPending: isDeleteingWorkspace 
     } = useDeleteWorkspace();
+    const { 
+        mutate: resetInviteCode, 
+        isPending: isResettingInviteCode 
+    } = useResetInviteCode();
     const [DeleteDialog, confirmDelete] = useConfirm(
         "Delete workspace",
         "This action cannot be undone",
         "destructive"
-    )
+    );
+    const [ResetDialog, confirmReset] = useConfirm(
+        "Reset invite link",
+        "This will invalidated current invite link.",
+        "default"
+    );
 
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -81,6 +92,20 @@ export const UpdateWorkspaceForm = ({
         }, {
             onSuccess: () => {
                 window.location.href="/home";
+            }
+        });
+    };
+
+    const handleResetInviteCode = async () => {
+        const ok = await confirmReset();
+
+        if(!ok) return;
+
+        resetInviteCode({
+            param: { workspaceId: initialValues.id }
+        }, {
+            onSuccess: () => {
+                router.refresh();
             }
         });
     };
@@ -115,9 +140,17 @@ export const UpdateWorkspaceForm = ({
         }
     };
 
+    const fullInviteLink = `${window.location.origin}/workspaces/${initialValues.id}/join/${initialValues.inviteCode}`;
+
+    const handleCopyInviteLink = () => {
+        navigator.clipboard.writeText(fullInviteLink)
+            .then(() => toast.success("Copied to clipboard"))
+    };
+
     return (
         <div className="flex flex-col gap-y-4">
             <DeleteDialog />
+            <ResetDialog />
             <Card className="w-full h-full border-none shadow-none">
                 <CardHeader className="flex flex-row items-center gap-x-4 space-y-0 p-6">
                     <CardTitle className="text-xl font-semibold">
@@ -279,6 +312,46 @@ export const UpdateWorkspaceForm = ({
                 <CardContent className="p-6">
                     <div className="flex flex-col">
                         <h3 className="font-bold">
+                            Invite members
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                            Use this link to add members to your workspace.
+                        </p>
+                        
+                        <div className="mt-4">
+                            <div className="flex items-center gap-x-2">
+                                <Input 
+                                    disabled
+                                    value={fullInviteLink}
+                                />
+                                <Button
+                                    onClick={handleCopyInviteLink}
+                                    variant="secondary"
+                                >
+                                    <Copy className="size-4"/>
+                                </Button>
+                            </div>
+                        </div>
+
+                        <DottedSeparator className="mt-4"/>
+                        <Button
+                            size="sm"
+                            className="w-fit mt-4"
+                            type="button"
+                            variant="tertiary"
+                            disabled={isPending || isResettingInviteCode}
+                            onClick={handleResetInviteCode}
+                        >
+                            Reset invite link
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card className="w-full h-full border-none shadow-none">
+                <CardContent className="p-6">
+                    <div className="flex flex-col">
+                        <h3 className="font-bold">
                             Danger Zone
                         </h3>
                         <p className="text-sm text-muted-foreground">
@@ -298,6 +371,7 @@ export const UpdateWorkspaceForm = ({
                     </div>
                 </CardContent>
             </Card>
+            
         </div>
     )
 }
