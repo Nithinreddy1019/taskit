@@ -8,6 +8,7 @@ import { bucketName, deleteFromBucket, generateSignedUrl, isValidFileSize, putIm
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { MemberRole } from "../types";
 import { generateInviteCode } from "@/lib/utils";
+import { string } from "zod";
 
 const app = new Hono()
     .get("/",
@@ -161,25 +162,32 @@ const app = new Hono()
                 }
             });
 
-            if(!!worksapce && (worksapce.image !== null)) {
-                const res = await deleteFromBucket(worksapce.image);
+            if(image === undefined || typeof(image) === "string") {
+                const updatedWorkspace = await db.workspace.update({
+                    where: {
+                        id: workspaceId
+                    },
+                    data: {
+                        name: name
+                    }
+                });
+
+                return c.json({ data: updatedWorkspace }, 200);
             };
 
-
-            let imageFileName = ""
-
-            if(image instanceof File) {
-                imageFileName = await randomImageName();
-                const uploadRes = await putImageInBucket(image as File, imageFileName)
-                if("error" in uploadRes) {
-                    return c.json({ error: "Image upload went wrong"}, 400)
-                }
+            if(worksapce?.image !== null) {
+                const res = await deleteFromBucket(worksapce?.image!);
             }
 
-            const updatedWorkspace = await db.workspace.update({
+            const imageFileName = await randomImageName();
+            const uploadRes = await putImageInBucket(image as File, imageFileName)
+            if("error" in uploadRes) {
+                return c.json({ error: "Image upload went wrong"}, 400)
+            }
+
+            const updatedWorkspaceWithImage = await db.workspace.update({
                 where: {
-                    id: workspaceId,
-                    userId: session.user.id!
+                    id: workspaceId
                 },
                 data: {
                     name: name,
@@ -187,8 +195,8 @@ const app = new Hono()
                 }
             });
 
+            return c.json({ data: updatedWorkspaceWithImage }, 200);
 
-            return c.json({ data: updatedWorkspace }, 200);
         }
     );
 
