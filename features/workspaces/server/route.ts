@@ -256,6 +256,43 @@ const app = new Hono()
 
         }
     )
+    .post("/:workspaceId/reset-invite-code",
+        async (c) => {
+            const session = await auth();
+            if(!session?.user) {
+                return c.json({ error: "Unauthorized" }, 401);
+            };
+
+            const { workspaceId } = c.req.param();
+
+            const isMember = await db.members.findUnique({
+                where: {
+                    memberId: {
+                        userId: session.user.id!,
+                        workspaceId: workspaceId
+                    }
+                }
+            });
+
+            if(!isMember || isMember.role !== MemberRole.ADMIN) {
+                return c.json({ error: "Unauthorized" }, 401)
+            };
+
+            const newCode = await generateInviteCode(6);
+
+            const updatedWorkspace = await db.workspace.update({
+                where: {
+                    id: workspaceId
+                },
+                data: {
+                    inviteCode: newCode
+                }
+            });
+
+            return c.json({ data: updatedWorkspace }, 200)
+
+        }
+    )
 
 
 export default app;
