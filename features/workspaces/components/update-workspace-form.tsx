@@ -69,8 +69,7 @@ export const UpdateWorkspaceForm = ({
             image: values.image instanceof File ? values.image : values.image !== "" ? values.image : ""
         };
 
-        console.log("values are", values);
-        console.log(finalValues);
+        console.log(finalValues)
 
         mutate({ 
             form: finalValues, 
@@ -180,16 +179,38 @@ export const UpdateWorkspaceForm = ({
                                                     disabled={isPending}
                                                     onChange={handleImageChange}
                                                 />
-                                                <Button
-                                                    type="button"
-                                                    variant="tertiary"
-                                                    size="xs"
-                                                    disabled={isPending}
-                                                    className="mt-2 w-fit"
-                                                    onClick={() =>inputRef.current?.click()}
-                                                >
-                                                    Select image
-                                                </Button>
+                                                {field.value ? 
+                                                    (
+                                                        <Button
+                                                            type="button"
+                                                            variant="destructive"
+                                                            size="xs"
+                                                            disabled={isPending}
+                                                            className="mt-2 w-fit"
+                                                            onClick={() => {
+                                                                field.onChange("");
+                                                                if(inputRef.current) {
+                                                                    inputRef.current.value = ""
+                                                                }
+                                                                console.log(field.value)
+                                                            }}
+                                                        >
+                                                            Remove image
+                                                        </Button>
+                                                    ) :
+                                                    (
+                                                        <Button
+                                                            type="button"
+                                                            variant="tertiary"
+                                                            size="xs"
+                                                            disabled={isPending}
+                                                            className="mt-2 w-fit"
+                                                            onClick={() =>inputRef.current?.click()}
+                                                        >
+                                                            Select image
+                                                        </Button>
+                                                    )
+                                                }
                                             </div>
                                         </div>
                                     </div>

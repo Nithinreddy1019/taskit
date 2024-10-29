@@ -161,19 +161,35 @@ const app = new Hono()
                     userId: session.user.id!
                 }
             });
+        
+            
 
-            if(image === undefined || typeof(image) === "string") {
+            if (image === "undefined" || image === "") {
+                if(worksapce?.image !== null) {
+                    const res = await deleteFromBucket(worksapce?.image!);
+                }
                 const updatedWorkspace = await db.workspace.update({
                     where: {
                         id: workspaceId
                     },
                     data: {
-                        name: name
+                        name: name,
+                        image: null
                     }
                 });
-
                 return c.json({ data: updatedWorkspace }, 200);
-            };
+            } else if (typeof(image) === "string" && image !== "undefined") {
+                const updatedWorkspace = await db.workspace.update({
+                    where: {
+                        id: workspaceId
+                    },
+                    data: {
+                        name: name,
+                    }
+                });
+                return c.json({ data: updatedWorkspace }, 200);
+            }
+            
 
             if(worksapce?.image !== null) {
                 const res = await deleteFromBucket(worksapce?.image!);
