@@ -25,7 +25,7 @@ export const MobileSidebar = () => {
                     className="lg:hidden"
                     size="icon"
                 >
-                    <PanelLeft className="size-5 text-neutral-700"/>
+                    <PanelLeft className="size-5 text-neutral-700 dark:text-neutral-100"/>
                 </Button>
             </SheetTrigger>
             <SheetContent side="left" className="p-0" Icon={PanelRight}>
