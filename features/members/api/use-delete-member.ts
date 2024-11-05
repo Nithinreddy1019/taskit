@@ -29,7 +29,7 @@ export const useDeleteMember = () => {
             return await response.json();
         },
         onSuccess: ({data}) => {
-            toast.success("member removed from workspace");
+            toast.success("Member removed from workspace");
             queryClient.invalidateQueries({ queryKey: ["members"] });
         },
         onError: (error) => {
