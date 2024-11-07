@@ -141,6 +141,7 @@ const app = new Hono()
             const { workspaceId } = c.req.param();
             const { name, image } = c.req.valid("form");
 
+
             const isMember = await db.members.findUnique({
                 where: {
                     memberId: {
@@ -162,7 +163,7 @@ const app = new Hono()
                 }
             });
         
-            
+            // WIP: TODO add admin validation before changeing
 
             if (image === "undefined" || image === "") {
                 if(worksapce?.image !== null) {
