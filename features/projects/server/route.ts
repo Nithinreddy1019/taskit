@@ -6,8 +6,8 @@ import { auth } from "@/auth";
 
 import { db } from "@/lib/db";
 import { truncateByDomain } from "recharts/types/util/ChartUtils";
-import { generateSignedUrl, isValidFileSize, putImageInBucket, randomImageName } from "@/lib/s3";
-import { createProjectSchema } from "../schemas";
+import { deleteFromBucket, generateSignedUrl, isValidFileSize, putImageInBucket, randomImageName } from "@/lib/s3";
+import { createProjectSchema, updateProjectSchema } from "../schemas";
 
 
 const app = new Hono()
@@ -110,6 +110,145 @@ const app = new Hono()
             });
 
             return c.json({ data: project }, 200)
+
+        }
+    )
+    .patch("/:projectId",
+        zValidator("form", updateProjectSchema),
+        async (c) => {
+            const session = await auth();
+            
+            if(!session?.user) {
+                return c.json({ error: "Unauthorized"}, 401)
+            };
+
+            const { projectId } = c.req.param();
+            const { name, image } = c.req.valid("form");
+
+            const existingProject = await db.projetcs.findUnique({
+                where: {
+                    id: projectId
+                }
+            });
+
+            if(!existingProject) {
+                return c.json({ error: "Project does not exist "}, 403);
+            };
+
+
+            const isMember = await db.members.findUnique({
+                where: {
+                    memberId: {
+                        userId: session.user.id!,
+                        workspaceId: existingProject?.workspaceId!
+                    }
+                }
+            });
+
+            if(!isMember) {
+                return c.json({ error: "Unauthorized" }, 401)
+            };
+
+        
+
+            if (image === "undefined" || image === "") {
+                if(existingProject?.image !== null) {
+                    const res = await deleteFromBucket(existingProject?.image!);
+                }
+                const updatedProject = await db.projetcs.update({
+                    where: {
+                        id: existingProject.id
+                    },
+                    data: {
+                        name: name,
+                        image: null,
+                        updatedAt: new Date().toISOString()
+                    }
+                });
+                return c.json({ data: updatedProject }, 200);
+            } else if (typeof(image) === "string" && image !== "undefined") {
+                const updatedProject = await db.projetcs.update({
+                    where: {
+                        id: existingProject.id
+                    },
+                    data: {
+                        name: name,
+                        updatedAt: new Date().toISOString()
+                    }
+                });
+                return c.json({ data: updatedProject }, 200);
+            }
+            
+
+            if(existingProject?.image !== null) {
+                const res = await deleteFromBucket(existingProject?.image!);
+            }
+
+            const imageFileName = await randomImageName();
+            const uploadRes = await putImageInBucket(image as File, imageFileName)
+            if("error" in uploadRes) {
+                return c.json({ error: "Image upload went wrong"}, 400)
+            }
+
+            const updatedProjectWithImage = await db.projetcs.update({
+                where: {
+                    id: existingProject.id
+                },
+                data: {
+                    name: name,
+                    image: imageFileName,
+                    updatedAt: new Date().toISOString()
+                }
+            });
+
+            return c.json({ data: updatedProjectWithImage }, 200);
+
+        }
+    )
+    .delete("/:projectId",
+        async (c) => {
+            const session = await auth();
+            if(!session?.user) {
+                return c.json({ error: "Unauthorized" }, 401);
+            };
+
+            const { projectId } = c.req.param();
+
+            const existingProject = await db.projetcs.findUnique({
+                where: {
+                    id: projectId
+                }
+            });
+
+            if(!existingProject) {
+                return c.json({ error: "Project does not exist "}, 403);
+            };
+
+
+            const isMember = await db.members.findUnique({
+                where: {
+                    memberId: {
+                        userId: session.user.id!,
+                        workspaceId: existingProject.workspaceId
+                    }
+                }
+            });
+
+            if(!isMember) {
+                return c.json({ error: "Unauthorized" }, 401)
+            };
+
+           
+            
+
+            // TODO:delete tasks associated with it
+            await db.projetcs.delete({
+                where: {
+                    id: projectId
+                }
+            });
+
+            return c.json({ data: { id: projectId }}, 200);
 
         }
     )
