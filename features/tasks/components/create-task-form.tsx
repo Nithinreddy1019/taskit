@@ -31,15 +31,14 @@ import * as z from "zod";
 import { useCreateTask } from "../api/use-create-task";
 
 import { createTaskSchema } from "../schemas"
-import { ImageIcon, Loader } from "lucide-react";
-import { ChangeEvent, useRef } from "react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
+import { Loader } from "lucide-react";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { DatePicker } from "@/components/date-picker";
 import { MemberAvatar } from "@/features/members/components/member-avatar";
 import { TaskPriority, TaskStatus } from "../types";
+import { cn } from "@/lib/utils";
+import { TaskStatusIcon } from "./task-status-icon";
+import { TaskPriorityIcon } from "./task-priority-icon";
 
 
 interface CreateTaskFormProps {
@@ -55,7 +54,6 @@ export const CreateTaskForm = ({
     memberOptions
 }: CreateTaskFormProps) => {
 
-    const router = useRouter();
     const workspaceId = useWorkspaceId();
 
     const { isPending, mutate } = useCreateTask();
@@ -74,6 +72,7 @@ export const CreateTaskForm = ({
                 form.reset();
                 console.log("reached")
                 onCancel?.();
+                
             }
         });
     };
@@ -191,19 +190,19 @@ export const CreateTaskForm = ({
                                             {/* WIP: // Make these good lookign components fro status */}
                                             <SelectContent>
                                                 <SelectItem value={TaskStatus.BACKLOG}>
-                                                    Backlog
+                                                    <TaskStatusIcon status={TaskStatus.BACKLOG}/>
                                                 </SelectItem>
                                                 <SelectItem value={TaskStatus.TODO}>
-                                                    Todo
+                                                    <TaskStatusIcon status={TaskStatus.TODO}/>
                                                 </SelectItem>
                                                 <SelectItem value={TaskStatus.IN_PROGRESS}>
-                                                    In Progeress
+                                                    <TaskStatusIcon status={TaskStatus.IN_PROGRESS}/>
                                                 </SelectItem>
                                                 <SelectItem value={TaskStatus.IN_REVIEW}>
-                                                    In Review
+                                                    <TaskStatusIcon status={TaskStatus.IN_REVIEW}/>
                                                 </SelectItem>
                                                 <SelectItem value={TaskStatus.DONE}>
-                                                    Done
+                                                    <TaskStatusIcon status={TaskStatus.DONE} />
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
@@ -232,16 +231,16 @@ export const CreateTaskForm = ({
                                             {/* WIP: // Make these good lookign components fro Priority */}
                                             <SelectContent>
                                                 <SelectItem value={TaskPriority.LOW}>
-                                                    Low
+                                                    <TaskPriorityIcon priority={TaskPriority.LOW}/>
                                                 </SelectItem>
                                                 <SelectItem value={TaskPriority.MEDIUM}>
-                                                    Medium
+                                                    <TaskPriorityIcon priority={TaskPriority.MEDIUM}/>
                                                 </SelectItem>
                                                 <SelectItem value={TaskPriority.HIGH}>
-                                                    High
+                                                    <TaskPriorityIcon priority={TaskPriority.HIGH}/>
                                                 </SelectItem>
                                                 <SelectItem value={TaskPriority.EMERGENCY}>
-                                                    Emergency
+                                                    <TaskPriorityIcon priority={TaskPriority.EMERGENCY}/>
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
