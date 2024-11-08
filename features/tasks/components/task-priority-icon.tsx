@@ -25,7 +25,7 @@ export const TaskPriorityIcon = ({
     return (
         <div 
             className={cn(
-                "flex items-center gap-x-2 rounded-md px-1.5 py-0.5", 
+                "flex items-center gap-x-2 rounded-md px-1", 
                 variant === "icon" && "p-0 rounded-full",
                 priority === TaskPriority.LOW && "bg-green-400/80 text-green-700",
                 priority === TaskPriority.MEDIUM && "bg-yellow-400/50 text-yellow-500",
@@ -35,17 +35,18 @@ export const TaskPriorityIcon = ({
         >
             <div 
                 className={cn(
-                    "rounded-sm p-1",
+                    "",
+                    variant === "icon" && "p-1 rounded-sm",
                     priority === TaskPriority.LOW && "text-green-700",
                     priority === TaskPriority.MEDIUM && "text-yellow-400",
                     priority === TaskPriority.HIGH && "text-red-700",
                     priority === TaskPriority.EMERGENCY && "text-red-700",
                 )}
             >  
-                    {priority === TaskPriority.LOW && <FiWind className=""/>}
-                    {priority === TaskPriority.MEDIUM && <FaForward className=""/> }
-                    {priority === TaskPriority.HIGH && <FiAlertTriangle className=""/>}
-                    {priority === TaskPriority.EMERGENCY && <IoSkull className=""/>}
+                    {priority === TaskPriority.LOW && <FiWind className={cn(variant !== "icon" && "size-2")}/>}
+                    {priority === TaskPriority.MEDIUM && <FaForward className={cn(variant !== "icon" && "size-2")}/> }
+                    {priority === TaskPriority.HIGH && <FiAlertTriangle className={cn(variant !== "icon" && "size-2")}/>}
+                    {priority === TaskPriority.EMERGENCY && <IoSkull className={cn(variant !== "icon" && "size-2")}/>}
             </div>
             <div
                 className={cn(
