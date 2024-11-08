@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { getProjectDetailsAction } from "@/features/projects/actions/get-project-details-action";
 import { ProjectAvatar } from "@/features/projects/components/project-avatar";
+import { TaskViewSwitcher } from "@/features/tasks/components/task-view-switcher";
 import { formatDateFromIso } from "@/lib/utils";
 import { Pencil } from "lucide-react";
 import Link from "next/link";
@@ -62,6 +63,9 @@ const ProjectIdPage = async ({
                     </Button>
                 </div>
             </div>
+
+            <TaskViewSwitcher />
+
         </div>
     )
 }

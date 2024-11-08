@@ -27,6 +27,8 @@ model User {
   members    Members[]
 
   projects Projetcs[]
+
+  tasksAssigned Tasks[]
 }
 
 model Account {
@@ -70,6 +72,8 @@ model Workspace {
 
   members  Members[]
   projects Projetcs[]
+
+  tasks Tasks[]
 }
 
 enum Role {
@@ -102,4 +106,50 @@ model Projetcs {
 
   workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  tasks Tasks[]
+}
+
+
+model Tasks {
+  id String @id @default(uuid())
+  name String
+  description String? 
+
+
+  projectId String
+  project Projetcs @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+
+  assigneeId String
+  assignee User @relation(fields: [assigneeId], references: [id])
+
+
+  workspaceId String
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime?
+  dueDate DateTime
+
+  position Int
+
+  status Status
+  priority Priority?
+
+}
+
+enum Status {
+  BACKLOG
+  TODO
+  IN_PROGRESS
+  IN_REVIEW
+  DONE
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  EMERGENCY
 }
