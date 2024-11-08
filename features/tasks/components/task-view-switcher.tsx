@@ -1,4 +1,6 @@
-import { DottedSeparator } from "@/components/dotted-separator"
+"use client"
+
+
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { 
@@ -8,9 +10,14 @@ import {
     TabsTrigger,
 } from "@/components/ui/tabs"
 import { PlusIcon } from "lucide-react"
+import { useCreateTaskModal } from "../hooks/use-create-task-modal"
 
 
 export const TaskViewSwitcher = () => {
+
+    const { open, close } = useCreateTaskModal();
+
+
     return (
         <Tabs 
             className="flex-1 w-full border rounded-lg"
@@ -41,6 +48,7 @@ export const TaskViewSwitcher = () => {
                         variant="default"
                         size="sm"
                         className="w-full lg:w-auto"
+                        onClick={open}
                     >
                         <PlusIcon className="size-4"/>
                         New task
