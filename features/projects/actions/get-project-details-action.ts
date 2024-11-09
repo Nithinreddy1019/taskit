@@ -27,6 +27,7 @@ export const getProjectDetailsAction = async ({
             id: projectId
         }
     });
+    
 
     const isMember = await db.members.findUnique({
         where: {

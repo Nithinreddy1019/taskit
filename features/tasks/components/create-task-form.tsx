@@ -92,7 +92,7 @@ export const CreateTaskForm = ({
             <CardContent className="p-6">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <div className="flex flex-col gap-y-4">
+                        <div className="flex flex-col gap-y-2">
                             <FormField 
                                 control={form.control}
                                 name="name"
@@ -187,7 +187,6 @@ export const CreateTaskForm = ({
                                                 </SelectTrigger>
                                             </FormControl>
                                             <FormMessage />
-                                            {/* WIP: // Make these good lookign components fro status */}
                                             <SelectContent>
                                                 <SelectItem value={TaskStatus.BACKLOG}>
                                                     <TaskStatusIcon status={TaskStatus.BACKLOG}/>
@@ -228,7 +227,6 @@ export const CreateTaskForm = ({
                                                 </SelectTrigger>
                                             </FormControl>
                                             <FormMessage />
-                                            {/* WIP: // Make these good lookign components fro Priority */}
                                             <SelectContent>
                                                 <SelectItem value={TaskPriority.LOW}>
                                                     <TaskPriorityIcon priority={TaskPriority.LOW}/>
@@ -277,8 +275,7 @@ export const CreateTaskForm = ({
                                                             <MemberAvatar 
                                                                 className="size-6"
                                                                 name={project.name!}
-                                                                imageUrl={undefined}
-                                                                // WIP:: TODO get the image url in api and use here
+                                                                imageUrl={project.image!}
                                                             />
                                                             {project.name}
                                                         </div>

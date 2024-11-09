@@ -38,7 +38,7 @@ export const CreateTaskFormWrapper = ({
     const projectOptions = projects?.map((project) => ({
         id: project.id,
         name: project.name,
-        image: project.image
+        image: project.imageUrl
     }));
 
     const memberOptions = members?.map((member) => ({

@@ -42,7 +42,6 @@ const app = new Hono()
             };
 
             // TODO: Why do we need workpsaceID, need projectID
-            // Why asc in video it should be desc
             const highestPositiontask = await db.tasks.findMany({
                 where: {
                     status: status,
@@ -68,7 +67,8 @@ const app = new Hono()
                     assigneeId: assigneeId,
                     projectId: projectId,
                     workspaceId: workspaceId,
-                    position: newPosition,                        dueDate: dueDate
+                    position: newPosition,                        
+                    dueDate: dueDate
                 }
             });
 
@@ -100,7 +100,13 @@ const app = new Hono()
                 priority,
                 search,
                 dueDate
-            } = c.req.valid("query");
+            } =  c.req.valid("query");
+
+            console.log("WorkspaceIdw" , workspaceId);
+
+            if(!workspaceId) {
+                return c.json({ error: "Unauthorized" }, 401)
+            };
 
             const isMember = await db.members.findUnique({
                 where: {
