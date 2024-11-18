@@ -148,6 +148,7 @@ const app = new Hono()
                     dueDate: true,
                     createdAt: true,
                     projectId: true,
+                    workspaceId: true,
                     project: {
                         select: {
                             id: true,
@@ -188,6 +189,44 @@ const app = new Hono()
 
             return c.json({ data: updatedTasks }, 200);
             // WIP: Ensure there are no bugs/corener cases
+        }
+    )
+    .delete("/:taskId",
+        async (c) => {
+            const session = await auth();
+            if(!session?.user) {
+                return c.json({ error: "Unauthorized" }, 401)
+            };
+
+            const { taskId } = c.req.param();
+
+            const task = await db.tasks.findUnique({
+                where: {
+                    id: taskId
+                }
+            });
+
+            const isMember = await db.members.findUnique({
+                where: {
+                    memberId: {
+                        userId: session.user.id!,
+                        workspaceId: task?.workspaceId!
+                    }
+                }
+            });
+
+            if(!isMember) {
+                return c.json({ error: "unauthorized "}, 401)
+            };
+
+            await db.tasks.delete({
+                where: {
+                    id: taskId
+                }
+            });
+
+            return c.json({ data: { id: task?.id } }, 200);
+
         }
     )
 

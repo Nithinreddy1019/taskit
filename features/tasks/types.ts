@@ -28,6 +28,7 @@ export type TaskType = {
     id: string;
     createdAt: Date | string;
     position: number;
+    workspaceId: string;
     project: {
         id: string,
         name: string,

@@ -5,10 +5,10 @@ import { cn } from "@/lib/utils";
 
 import "./globals.css";
 import { QueryProvider } from "@/components/query-provider";
-import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SessionProvider } from "next-auth/react";
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import { Toaster } from "@/components/ui/sonner";
 
 
 
