@@ -25,7 +25,7 @@ export const TaskPriorityIcon = ({
     return (
         <div 
             className={cn(
-                "flex items-center gap-x-2 rounded-md px-1", 
+                "flex items-center gap-x-2 rounded-md px-1 w-fit", 
                 variant === "icon" && "p-0 rounded-full",
                 priority === TaskPriority.LOW && "bg-green-400/80 text-green-700",
                 priority === TaskPriority.MEDIUM && "bg-yellow-400/50 text-yellow-500",

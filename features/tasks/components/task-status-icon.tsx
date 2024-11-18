@@ -21,7 +21,7 @@ export const TaskStatusIcon = ({
     return (
         <div 
             className={cn(
-                "flex items-center gap-x-2 px-1.5 rounded-md my-1", 
+                "flex items-center gap-x-2 px-1.5 rounded-md my-1 w-fit", 
                 variant === "icon" && "p-0 rounded-full",
                 status === TaskStatus.BACKLOG && "bg-black/50 text-black dark:text-white/50",
                 status === TaskStatus.TODO && "bg-orange-800/50 text-orange-800",
