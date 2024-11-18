@@ -229,5 +229,140 @@ const app = new Hono()
 
         }
     )
+    .patch("/:taskId",
+        zValidator("json", createTaskSchema.partial()),
+        async (c) => {
+            const session = await auth();
+            if(!session?.user) {
+                return c.json({ error: "Unauthorized" }, 401)
+            };
+
+            const {
+                name,
+                description,
+                status,
+                priority,
+                assigneeId,
+                projectId,
+                workspaceId,
+                dueDate
+            } = c.req.valid("json");
+            const { taskId } = c.req.param();
+
+            const existingTask = await db.tasks.findUnique({
+                where: {
+                    id: taskId
+                }
+            });
+
+            const isMember = await db.members.findUnique({
+                where: {
+                    memberId: {
+                        userId: session.user.id!,
+                        workspaceId: existingTask?.workspaceId!
+                    }
+                }
+            });
+            if(!isMember) {
+                return c.json({ error: "Unauthorized" }, 401)
+            };
+
+
+
+            // Ensure that you areputtin in ISO string date
+            const task = await db.tasks.update({
+                where: {
+                    id: taskId
+                },
+                data: {
+                    name: name,
+                    description: description,
+                    status: status,
+                    priority: priority,
+                    assigneeId: assigneeId,
+                    projectId: projectId,
+                    workspaceId: workspaceId,
+                    dueDate: dueDate
+                }
+            });
+
+            return c.json({ data: task }, 200);
+
+        }
+    )
+    .get("/:taskId",
+        async (c) => {
+            const session = await auth();
+            if(!session?.user) {
+                return c.json({ error: "Unauthorized" }, 200);
+            };
+
+            const { taskId } = c.req.param();
+
+            const existingTask = await db.tasks.findUnique({
+                where: {
+                    id: taskId
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    description: true,
+                    status: true,
+                    priority: true,
+                    position: true,
+                    dueDate: true,
+                    createdAt: true,
+                    projectId: true,
+                    workspaceId: true,
+                    project: {
+                        select: {
+                            id: true,
+                            name: true,
+                            image: true,
+
+                        }
+                    },
+                    assigneeId: true,
+                    assignee: {
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                            image: true
+                        }
+                    }
+                }
+            });
+
+            const isMember = await db.members.findUnique({
+                where: {
+                    memberId: {
+                        userId: session.user.id!,
+                        workspaceId: existingTask?.workspaceId!
+                    }
+                }
+            });
+            if(!isMember) {
+                return c.json({ error: "Unauthorized" }, 401)
+            };
+
+            let updatedTask = existingTask;
+
+            if(existingTask?.project.image) {
+                const imageUrl = await generateSignedUrl(existingTask.project.image);
+                updatedTask = {
+                    ...existingTask,
+                    project: {
+                        ...existingTask.project,
+                        image: imageUrl
+                    }
+                }
+            };
+
+
+            return c.json({ data: updatedTask }, 200);
+
+        }
+    )
 
 export default app;

@@ -11,5 +11,5 @@ export const createTaskSchema = z.object({
     dueDate: z.coerce.date(),
     assigneeId: z.string().trim().min(1, "Required"),
     description: z.string().optional(),
-    priority: z.nativeEnum(TaskPriority).optional()
+    priority: z.nativeEnum(TaskPriority).nullable().optional()
 })
