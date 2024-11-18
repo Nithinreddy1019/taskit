@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import { createTaskSchema } from "../schemas";
 import { db } from "@/lib/db";
-import { TaskPriority, TaskStatus } from "../types";
+import { TaskPriority, TaskStatus, TaskType } from "../types";
 import { generateSignedUrl } from "@/lib/s3";
 
 
@@ -144,6 +144,7 @@ const app = new Hono()
                     description: true,
                     status: true,
                     priority: true,
+                    position: true,
                     dueDate: true,
                     createdAt: true,
                     projectId: true,
@@ -152,8 +153,7 @@ const app = new Hono()
                             id: true,
                             name: true,
                             image: true,
-                            createdBy: true,
-                            createdAt: true
+
                         }
                     },
                     assigneeId: true,
@@ -169,8 +169,8 @@ const app = new Hono()
             });
 
 
-            const updatedTasks = await Promise.all(
-                tasks.map(async (task) => {
+            const updatedTasks: TaskType[] = await Promise.all(
+                tasks.map(async (task: TaskType): Promise<TaskType> => {
                     if(task.project.image) {
                         const imageUrl = await generateSignedUrl(task.project.image);
                         return {

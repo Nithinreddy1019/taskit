@@ -1,3 +1,5 @@
+import { $Enums } from "@prisma/client";
+
 export enum TaskStatus {
     BACKLOG = "BACKLOG",
     TODO = "TODO",
@@ -12,4 +14,29 @@ export enum TaskPriority {
     MEDIUM = "MEDIUM",
     HIGH = "HIGH",
     EMERGENCY = "EMERGENCY"
+}
+
+
+export type TaskType = {
+    name: string;
+    status: TaskStatus | $Enums.Status;
+    projectId: string;
+    dueDate: Date | string;
+    assigneeId: string;
+    description: string | null;
+    priority: TaskPriority | $Enums.Priority | null;
+    id: string;
+    createdAt: Date | string;
+    position: number;
+    project: {
+        id: string,
+        name: string,
+        image: string | null
+    },
+    assignee: {
+        id: string,
+        name: string |  null,
+        email: string,
+        image: string | null,
+    }
 }
