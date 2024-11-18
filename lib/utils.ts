@@ -24,3 +24,12 @@ export const formatDateFromIso = (date: string) => {
 
   return formattedDate;
 }
+
+
+// To change from enum to string
+export const enumToDisplayText = <T extends string>(enumValue: T): string => {
+  const words = enumValue.toLowerCase().split('_');
+  return words
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+}
