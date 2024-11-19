@@ -294,7 +294,7 @@ const app = new Hono()
         async (c) => {
             const session = await auth();
             if(!session?.user) {
-                return c.json({ error: "Unauthorized" }, 200);
+                return c.json({ error: "Unauthorized" }, 401);
             };
 
             const { taskId } = c.req.param();
@@ -362,6 +362,69 @@ const app = new Hono()
 
             return c.json({ data: updatedTask }, 200);
 
+        }
+    )
+    .post("/bulk-update",
+        zValidator("json", z.object({
+            tasks: z.array(
+                z.object({
+                    id: z.string(),
+                    status: z.nativeEnum(TaskStatus),
+                    position: z.number().int().positive().min(1000).max(1000000)
+                })
+            )
+        })),
+        async (c) => {
+            const session = await auth();
+            if(!session?.user) {
+                return c.json({ error: "Unauthorized" }, 401);
+            };
+
+            const { tasks } = c.req.valid("json");
+
+            const tasksToUpdate = await db.tasks.findMany({
+                where: {
+                    id: {
+                        in: tasks.map((task) => task.id)
+                    }
+                }
+            });
+
+            const workspaceIds = new Set(tasksToUpdate.map((task) => task.workspaceId));
+            if(workspaceIds.size !== 1) {
+                return c.json({ error: "All tasks should belong to teh same workspace" }, 401);
+            };
+
+            const workspaceId = workspaceIds.values().next().value;
+
+            const isMember = await db.members.findUnique({
+                where: {
+                    memberId: {
+                        userId: session.user.id!,
+                        workspaceId: workspaceId!
+                    }
+                }
+            });
+            if(!isMember) {
+                return c.json({ error: "Unauthorized" }, 401);
+            };
+
+            const updatedTasks = await Promise.all(
+                tasks.map(async (task) => {
+                    const newTask = await db.tasks.update({
+                        where: {
+                            id: task.id
+                        },
+                        data: {
+                            status: task.status,
+                            position: task.position
+                        }
+                    });
+                    return newTask;
+                })
+            );
+
+            return c.json({ data: updatedTasks }, 200);
         }
     )
 
