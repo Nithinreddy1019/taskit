@@ -36,7 +36,7 @@ export const useUpdateTask = () => {
 
             router.refresh();
             await queryClient.invalidateQueries({ queryKey: ["tasks"] });
-            await queryClient.invalidateQueries({ queryKey: ["tasks", data.id] });
+            await queryClient.invalidateQueries({ queryKey: ["task", data.id] });
         },
         onError: (error) => {
             let errorMsg = "Failed to update task";
