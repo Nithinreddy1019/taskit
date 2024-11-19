@@ -38,6 +38,7 @@ export const KanbanColumnHeader = ({
                     {taskCount}
                 </div>
             </div>
+            {/* WIP: TODO- Ensure that status is filled prior to task form opening */}
             <Button
                 onClick={open}
                 variant="ghost"
