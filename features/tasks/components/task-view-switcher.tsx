@@ -25,7 +25,13 @@ import { useBulkUpdateTask } from "../api/use-bulk-update-tasks"
 import { DataCalendar } from "./data-calendar"
 
 
-export const TaskViewSwitcher = () => {
+interface TaskViewSwitcherProps {
+    hideProjectFilter?: boolean
+}
+
+export const TaskViewSwitcher = ({
+    hideProjectFilter,
+}: TaskViewSwitcherProps) => {
 
     const [view, setView ] = useQueryState("task-view", {
         defaultValue: "table"
@@ -107,7 +113,7 @@ export const TaskViewSwitcher = () => {
 
                 <Separator className="my-2"/>
                 
-                <DataFilters />
+                <DataFilters hideProjectFilter={hideProjectFilter}/>
 
                 <Separator className="my-2"/>
 

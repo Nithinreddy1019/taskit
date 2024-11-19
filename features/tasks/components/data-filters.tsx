@@ -171,34 +171,36 @@ export const DataFilters = ({
 
 
             {/* project filter selecting  */}
-            <Select
-                defaultValue={defaultProjectId && !projectId ? defaultProjectId : projectId ?? undefined}
-                onValueChange={(value) => onProjectChange(value)}
-            >
-                <SelectTrigger className="w-full lg:w-auto h-8">
-                    <div className="flex items-center pr-2">
-                        <FolderIcon className="size-4 mr-2"/>
-                        <SelectValue placeholder={"All projects"}/>
-                    </div>
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="all">
-                        All projects
-                    </SelectItem>
-                    <SelectSeparator />
-                    {projectOptions?.map((project) => (
-                        <SelectItem
-                            key={project.value}
-                            value={project.value}
-                        >   
-                            <div className="flex items-center gap-x-1">
-                                <ProjectAvatar imageUrl={project.image!} name={project.name!} className="size-4"/>
-                                <p>{project.name}</p>
-                            </div>
+            {!hideProjectFilter && (
+                <Select
+                    defaultValue={defaultProjectId && !projectId ? defaultProjectId : projectId ?? undefined}
+                    onValueChange={(value) => onProjectChange(value)}
+                >
+                    <SelectTrigger className="w-full lg:w-auto h-8">
+                        <div className="flex items-center pr-2">
+                            <FolderIcon className="size-4 mr-2"/>
+                            <SelectValue placeholder={"All projects"}/>
+                        </div>
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">
+                            All projects
                         </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
+                        <SelectSeparator />
+                        {projectOptions?.map((project) => (
+                            <SelectItem
+                                key={project.value}
+                                value={project.value}
+                            >   
+                                <div className="flex items-center gap-x-1">
+                                    <ProjectAvatar imageUrl={project.image!} name={project.name!} className="size-4"/>
+                                    <p>{project.name}</p>
+                                </div>
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            )}
 
 
             {/* dueDate filter */}
