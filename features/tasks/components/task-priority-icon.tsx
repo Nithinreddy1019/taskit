@@ -36,7 +36,7 @@ export const TaskPriorityIcon = ({
             <div 
                 className={cn(
                     "",
-                    variant === "icon" && "p-1 rounded-sm",
+                    variant === "icon" && "p-0.5 rounded-sm",
                     priority === TaskPriority.LOW && "text-green-700",
                     priority === TaskPriority.MEDIUM && "text-yellow-400",
                     priority === TaskPriority.HIGH && "text-red-700",

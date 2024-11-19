@@ -218,7 +218,7 @@ export const CreateTaskForm = ({
                                             Priority
                                         </FormLabel>
                                         <Select
-                                            defaultValue={field.value}
+                                            defaultValue={field.value!}
                                             onValueChange={field.onChange}
                                         >
                                             <FormControl>
@@ -310,9 +310,9 @@ export const CreateTaskForm = ({
                                 {isPending ? (
                                     <div className="flex items-center">
                                         <Loader className="h-4 w-4 mr-2 animate-spin"/>
-                                        <p>Creating project...</p>
+                                        <p>Creating task...</p>
                                     </div>  
-                                ) : "                                Create project"}
+                                ) : "                                Create task"}
                             </Button>
                         </div>
                     </form>
