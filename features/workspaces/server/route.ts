@@ -8,6 +8,8 @@ import { deleteFromBucket, generateSignedUrl, isValidFileSize, putImageInBucket,
 import { MemberRole } from "../types";
 import { generateInviteCode } from "@/lib/utils";
 import { z } from "zod";
+import { endOfMonth, startOfMonth, subMonths } from "date-fns";
+import { TaskStatus } from "@/features/tasks/types";
 
 const app = new Hono()
     .get("/",
@@ -338,6 +340,188 @@ const app = new Hono()
             });
 
             return c.json({ data: workspace }, 200);
+        }
+    )
+    .get("/:workspaceId/analytics",
+        async (c) => {
+            const session = await auth();
+            if(!session?.user) {
+                return c.json({ error: "Unauthorized" }, 401);
+            };
+
+            const { workspaceId } = c.req.param();
+
+            
+
+            const isMember = await db.members.findUnique({
+                where: {
+                    memberId: {
+                        userId: session.user.id!,
+                        workspaceId: workspaceId!
+                    }
+                }
+            });
+            if(!isMember) {
+                return c.json({ error: "Unauthorized" }, 401)
+            };
+
+            const now = new Date();
+            const thisMonthStart = startOfMonth(now);
+            const thisMonthEnd = endOfMonth(now);
+            const lastMonthStart = startOfMonth(subMonths(now, 1));
+            const lastMonthEnd = endOfMonth(subMonths(now, 1));
+
+            const thisMonthTasks = await db.tasks.findMany({
+                where: {
+                    workspaceId: workspaceId,
+                    dueDate: {
+                        gte: thisMonthStart.toISOString(),
+                        lte: thisMonthEnd.toISOString()
+                    }
+                }
+            });
+
+            const lastMonthTasks = await db.tasks.findMany({
+                where: {
+                    workspaceId: workspaceId,
+                    dueDate: {
+                        gte: lastMonthStart.toISOString(),
+                        lte: lastMonthEnd.toISOString()
+                    }
+                }
+            });
+
+            const taskCount = thisMonthTasks.length;
+            const tasksDifference = taskCount - lastMonthTasks.length;
+
+            const thisMonthAssignedTasks = await db.tasks.findMany({
+                where: {
+                    workspaceId: workspaceId,
+                    assigneeId: isMember.userId,
+                    dueDate: {
+                        gte: thisMonthStart.toISOString(),
+                        lte: thisMonthEnd.toISOString()
+                    }
+                }
+            });
+            
+            const lastMonthAssignedTasks = await db.tasks.findMany({
+                where: {
+                    workspaceId: workspaceId,
+                    assigneeId: isMember.userId,
+                    dueDate: {
+                        gte: lastMonthStart.toISOString(),
+                        lte: lastMonthEnd.toISOString()
+                    }
+                }
+            });
+
+            const assignedTaskCount = thisMonthAssignedTasks.length;
+            const assignedTaskDifference = assignedTaskCount - lastMonthAssignedTasks.length;
+
+            const thisMonthIncompleteTasks = await db.tasks.findMany({
+                where: {
+                    workspaceId: workspaceId,
+                    status: {
+                        not: TaskStatus.DONE
+                    },
+                    dueDate: {
+                        gte: thisMonthStart.toISOString(),
+                        lte: thisMonthEnd.toISOString()
+                    }
+                }
+            });
+            
+            const lastMonthIncompleteTasks = await db.tasks.findMany({
+                where: {
+                    workspaceId: workspaceId,
+                    status: {
+                        not: TaskStatus.DONE
+                    },
+                    dueDate: {
+                        gte: lastMonthStart.toISOString(),
+                        lte: lastMonthEnd.toISOString()
+                    }
+                }
+            });
+
+            const incompleteTaskCount = thisMonthIncompleteTasks.length;
+            const incompleteTaskDifference = incompleteTaskCount - lastMonthIncompleteTasks.length;
+
+
+            const thisMonthCompletedTasks = await db.tasks.findMany({
+                where: {
+                    workspaceId: workspaceId,
+                    status: TaskStatus.DONE,
+                    dueDate: {
+                        gte: thisMonthStart.toISOString(),
+                        lte: thisMonthEnd.toISOString()
+                    }
+                }
+            });
+            
+            const lastMonthCompletedTasks = await db.tasks.findMany({
+                where: {
+                    workspaceId: workspaceId,
+                    status: TaskStatus.DONE,
+                    dueDate: {
+                        gte: lastMonthStart.toISOString(),
+                        lte: lastMonthEnd.toISOString()
+                    }
+                }
+            });
+
+            const completedTaskCount = thisMonthCompletedTasks.length;
+            const completedTaskDifference = completedTaskCount - lastMonthCompletedTasks.length;
+
+
+            const thisMonthOverdueTasks = await db.tasks.findMany({
+                where: {
+                    workspaceId: workspaceId,
+                    status: {
+                        not: TaskStatus.DONE
+                    },
+                    dueDate: {
+                        lt: now.toISOString(),
+                        gte: thisMonthStart.toISOString(),
+                        lte: thisMonthEnd.toISOString()
+                    }
+                }
+            });
+            
+            const lastMonthOverdueTasks = await db.tasks.findMany({
+                where: {
+                    workspaceId: workspaceId,
+                    status: {
+                        not: TaskStatus.DONE
+                    },
+                    dueDate: {
+                        lt: now.toISOString(),
+                        gte: lastMonthStart.toISOString(),
+                        lte: lastMonthEnd.toISOString()
+                    }
+                }
+            });
+
+            const overdueTasksCount = thisMonthOverdueTasks.length;
+            const overdueTasksDifference = overdueTasksCount - lastMonthOverdueTasks.length;
+
+
+            return c.json({
+                data: {
+                    taskCount,
+                    tasksDifference,
+                    assignedTaskCount,
+                    assignedTaskDifference,
+                    completedTaskCount,
+                    completedTaskDifference,
+                    incompleteTaskCount,
+                    incompleteTaskDifference,
+                    overdueTasksCount,
+                    overdueTasksDifference
+                }
+            }, 200);
+
         }
     )
 
