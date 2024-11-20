@@ -12,6 +12,7 @@ import {
 import { TaskType, TaskStatus } from "../types";
 import { KanbanColumnHeader } from "./kanban-column-header";
 import { KanbanCard } from "./kanban-card";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 
 const boards: TaskStatus[] = [
@@ -177,10 +178,11 @@ export const DataKanban = ({
                             />
                             <Droppable droppableId={board}>
                                 {(provided) => (
+                                    <ScrollArea>
                                     <div
                                         {...provided.droppableProps}
                                         ref={provided.innerRef}
-                                        className="min-h-[200px] py-1.5"
+                                        className="min-h-[200px] py-1.5 max-h-[700px]"
                                     >
                                         {tasks[board].map((task, index) => (
                                             <Draggable
@@ -202,6 +204,8 @@ export const DataKanban = ({
                                         ))}
                                         {provided.placeholder}
                                     </div>
+                                    <ScrollBar />
+                                    </ScrollArea>
                                 )}
                             </Droppable>
                         </div>
