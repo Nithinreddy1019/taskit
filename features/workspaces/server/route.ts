@@ -78,23 +78,6 @@ const app = new Hono()
                 };
 
                 imageFileName = await randomImageName();
-                // const fileArrayBuffer = await image.arrayBuffer();
-                // const fileBuffer = Buffer.from(fileArrayBuffer);
-
-                // const params = {
-                //     Bucket: bucketName,
-                //     Key: imageFileName,
-                //     Body: fileBuffer,
-                //     ContentType: image.type 
-                // };
-
-                // const putCommand = new PutObjectCommand(params);
-                // const uploadResponse = await s3Client.send(putCommand);
-
-                /*
-                    Remove the above code after ensuriong func works fine
-                    WIP: 
-                */
 
                 const res = putImageInBucket(image, imageFileName);
             };
@@ -165,8 +148,6 @@ const app = new Hono()
                 }
             });
         
-            // WIP: TODO add admin validation before changeing
-
             if (image === "undefined" || image === "") {
                 if(worksapce?.image !== null) {
                     const res = await deleteFromBucket(worksapce?.image!);

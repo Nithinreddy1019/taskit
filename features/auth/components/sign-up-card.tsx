@@ -28,6 +28,8 @@ import { AuthFooter } from "./auth-footer";
 import { useRegister } from "../api/use-register";
 
 import { FiLoader } from "react-icons/fi";
+import Image from "next/image";
+import { Separator } from "@/components/ui/separator";
 
 
 export const SignUpCard = () => {
@@ -49,40 +51,37 @@ export const SignUpCard = () => {
     }
 
     return (
-        <Card className="w-full h-full p-4 shadow-none border-none">
-            <CardHeader className="flex items-center justify-center">
-                <CardTitle className="text-2xl md:text-3xl">
-                    Sign up
-                </CardTitle>
-                <p className="text-center mx-auto text-sm">
-                    By signing up, you agree to our
-                    <span className="text-blue-500"><Link href={"/privacy"}>{'\u00A0'}Privacy policy</Link>{'\u00A0'}</span>
-                    and
-                    <span className="text-blue-500"><Link href={"/terms"}>{'\u00A0'}Terms of service</Link></span>
-                </p>
+        <Card className="w-full h-full p-4 shadow-none border-none max-w-[600px] dark:bg-[#141414]">
+            <CardHeader className="flex items-start justify-center gap-y-4">
+                <Image 
+                    src={"/logo.svg"}
+                    alt="logo"
+                    height={40}
+                    width={40}
+                />
+                <div>
+                    <CardTitle className="text-lg">
+                        Signup to Taskit
+                    </CardTitle>
+                    <p className="text-muted-foreground">Manage your project, team and delegate tasks.</p>
+                </div>
             </CardHeader>
-            <div className="px-4">
-                <DottedSeparator />
-            </div>
             <CardContent>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-8">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-2">
                         <div className="space-y-4">
                         <FormField 
                                 control={form.control}
                                 name="username"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            Username
-                                        </FormLabel>
                                         <FormControl>
                                             <Input 
                                                 {...field}
                                                 type="text"
-                                                placeholder="Enter your username"
+                                                placeholder="Username"
                                                 disabled={isPending}
-                                                className="focus-visible:ring-blue-500 text-blue-700/60"
+                                                className="focus-visible:ring-blue-500 text-blue-700/60 dark:bg-[#0B0CO0E] h-10 rounded-lg"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -94,16 +93,13 @@ export const SignUpCard = () => {
                                 name="email"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            Email
-                                        </FormLabel>
                                         <FormControl>
                                             <Input 
                                                 {...field}
                                                 type="email"
-                                                placeholder="Enter your email"
+                                                placeholder="Email"
                                                 disabled={isPending}
-                                                className="focus-visible:ring-blue-500 text-blue-700/60"
+                                                className="focus-visible:ring-blue-500 text-blue-700/60 dark:bg-[#0B0CO0E] h-10 rounded-lg"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -115,16 +111,13 @@ export const SignUpCard = () => {
                                 name="password"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            Password
-                                        </FormLabel>
                                         <FormControl>
                                             <Input 
                                                 {...field}
                                                 type="password"
-                                                placeholder="Enter your password"
+                                                placeholder="Password"
                                                 disabled={isPending}
-                                                className="focus-visible:ring-blue-500 text-blue-700/60"
+                                                className="focus-visible:ring-blue-500 text-blue-700/60 dark:bg-[#0B0CO0E] h-10 rounded-lg"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -144,22 +137,33 @@ export const SignUpCard = () => {
                                 </div>
                             ) : ("Sign Up")}
                         </Button>
+
+                        <p className="mx-auto text-sm">
+                            By signing up, you agree to our
+                            <span className="text-blue-500"><Link href={"/privacy"}>{'\u00A0'}Privacy policy</Link>{'\u00A0'}</span>
+                            and
+                            <span className="text-blue-500"><Link href={"/terms"}>{'\u00A0'}Terms of service</Link></span>
+                        </p>
                     </form>
                 </Form>
 
-                <div className="space-y-4 mt-8">
-                    <DottedSeparator />
+                <div className="my-10 relative flex flex-col items-center">
+                    <Separator className="dark:bg-neutral-600"/>
+                    <p className="absolute top-1/2 -translate-y-1/2 bg-white dark:bg-[#141414] px-2 text-muted-foreground">Or authorize with</p>
+                </div>
+
+                <div className="flex items-center gap-x-4">
 
                     <Button
-                        className="w-full"
+                        className="w-full rounded-lg h-10"
                         variant="outline"
                     >
                         <FcGoogle />
                         Sign in with Google
                     </Button>
                     <Button
-                        className="w-full"
-                        variant="secondary"
+                        className="w-full rounded-lg h-10"
+                        variant="outline"
                     >
                         <FaGithub />
                         Sign in with Github
@@ -167,12 +171,10 @@ export const SignUpCard = () => {
                 </div>
 
                 <div className="mt-8 space-y-4">
-                    <DottedSeparator />
-
                     <AuthFooter 
                         footerText="Already have an account?"
                         footerLink="/sign-in"
-                        linkText="Sign In"
+                        linkText="Sign in"
                     />
                 </div>
             </CardContent>

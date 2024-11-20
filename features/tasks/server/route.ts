@@ -188,7 +188,6 @@ const app = new Hono()
             );
 
             return c.json({ data: updatedTasks }, 200);
-            // WIP: Ensure there are no bugs/corener cases
         }
     )
     .delete("/:taskId",

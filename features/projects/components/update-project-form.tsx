@@ -104,13 +104,7 @@ export const UpdateProjectForm = ({
             param: { projectId: initialValues.id }
         }, {
             onSuccess: (responseData) => {
-                // WIP: choose better of the two
-                // form.reset();
                 router.refresh();
-
-                // if('data' in responseData) {
-                //     router.push(`/workspaces/${responseData.data.id}`)
-                // }
             }
         });
     };

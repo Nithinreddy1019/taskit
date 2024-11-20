@@ -114,7 +114,6 @@ export const MembersList = () => {
                     <Fragment key={member.userId}>
                         <div className="flex items-center gap-4">
                             <MemberAvatar 
-                                //WIP: TODO Hanlde user image url issue
                                 imageUrl={member.image!} 
                                 name={member.name!}
                             />

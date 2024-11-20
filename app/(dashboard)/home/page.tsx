@@ -15,7 +15,6 @@ const HomePage = async () => {
     if(data?.length === 0) {
         redirect("workspaces/create")
     } else {
-        // WIP: Is this how it should be
         redirect(`/workspaces/${data?.[0].id}`)
     }
 

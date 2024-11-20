@@ -5,7 +5,6 @@ import { UserButton } from "./user-button"
 
 
     export const Navbar = () => {
-        // WIP:: Update the name as per the path in url
 
         const pathname = usePathname();
         console.log(pathname)

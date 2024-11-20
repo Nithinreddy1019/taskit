@@ -125,14 +125,7 @@ export const UpdateWorkspaceForm = ({
             param: { workspaceId: initialValues.id }
         }, {
             onSuccess: (responseData) => {
-
-                // WIP: See if there is another way to refresh the form and stay there itself
-
-                // form.reset();
                 router.refresh();
-                // if('data' in responseData) {
-                //     router.push(`/workspaces/${responseData.data.id}`)
-                // }
             }
         });
     };
