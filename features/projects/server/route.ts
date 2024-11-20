@@ -2,12 +2,14 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono"
 import * as z from "zod";
 import { auth } from "@/auth";
+import { endOfMonth, startOfMonth, subMonths } from "date-fns";
 
 
 import { db } from "@/lib/db";
-import { truncateByDomain } from "recharts/types/util/ChartUtils";
 import { deleteFromBucket, generateSignedUrl, isValidFileSize, putImageInBucket, randomImageName } from "@/lib/s3";
 import { createProjectSchema, updateProjectSchema } from "../schemas";
+import { TaskStatus } from "@/features/tasks/types";
+import { ProjectType } from "../types";
 
 
 const app = new Hono()
@@ -249,6 +251,233 @@ const app = new Hono()
             });
 
             return c.json({ data: { id: projectId }}, 200);
+
+        }
+    )
+    .get("/:projectId",
+        async (c) => {
+            const session = await auth();
+            if(!session?.user) {
+                return c.json({ error: "Unauthorized" }, 401);
+            };
+
+            const { projectId } = c.req.param();
+
+            const project = await db.projetcs.findUnique({
+                where: {
+                    id: projectId
+                }
+            });
+            
+        
+            const isMember = await db.members.findUnique({
+                where: {
+                    memberId: {
+                        userId: session.user.id!,
+                        workspaceId: project?.workspaceId!
+                    }
+                }
+            });
+
+            if(!isMember) {
+                return c.json({ error: "unauthorized" }, 401)
+            };
+
+            const projectData: ProjectType = {
+                id: project?.id!,
+                name: project?.name!,
+                image: project?.image !== null ? await generateSignedUrl(project?.image!): null,
+                createdAt: new Date(project?.createdAt!),
+                workspaceId: project?.workspaceId!
+            }
+        
+            return c.json({ data: projectData }, 200);
+
+        }
+    )
+    .get("/:projectId/analytics",
+        async (c) => {
+            const session = await auth();
+            if(!session?.user) {
+                return c.json({ error: "Unauthorized" }, 401);
+            };
+
+            const { projectId } = c.req.param();
+
+            const project = await db.projetcs.findUnique({
+                where: {
+                    id: projectId
+                }
+            });
+
+            const isMember = await db.members.findUnique({
+                where: {
+                    memberId: {
+                        userId: session.user.id!,
+                        workspaceId: project?.workspaceId!
+                    }
+                }
+            });
+            if(!isMember) {
+                return c.json({ error: "Unauthorized" }, 401)
+            };
+
+            const now = new Date();
+            const thisMonthStart = startOfMonth(now);
+            const thisMonthEnd = endOfMonth(now);
+            const lastMonthStart = startOfMonth(subMonths(now, 1));
+            const lastMonthEnd = endOfMonth(subMonths(now, 1));
+
+            const thisMonthTasks = await db.tasks.findMany({
+                where: {
+                    projectId: projectId,
+                    dueDate: {
+                        gte: thisMonthStart.toISOString(),
+                        lte: thisMonthEnd.toISOString()
+                    }
+                }
+            });
+
+            const lastMonthTasks = await db.tasks.findMany({
+                where: {
+                    projectId: projectId,
+                    dueDate: {
+                        gte: lastMonthStart.toISOString(),
+                        lte: lastMonthEnd.toISOString()
+                    }
+                }
+            });
+
+            const taskCount = thisMonthTasks.length;
+            const tasksDifference = taskCount - lastMonthTasks.length;
+
+            const thisMonthAssignedTasks = await db.tasks.findMany({
+                where: {
+                    projectId: projectId,
+                    assigneeId: isMember.userId,
+                    dueDate: {
+                        gte: thisMonthStart.toISOString(),
+                        lte: thisMonthEnd.toISOString()
+                    }
+                }
+            });
+            
+            const lastMonthAssignedTasks = await db.tasks.findMany({
+                where: {
+                    projectId: projectId,
+                    assigneeId: isMember.userId,
+                    dueDate: {
+                        gte: lastMonthStart.toISOString(),
+                        lte: lastMonthEnd.toISOString()
+                    }
+                }
+            });
+
+            const assignedTaskCount = thisMonthAssignedTasks.length;
+            const assignedTaskDifference = assignedTaskCount - lastMonthAssignedTasks.length;
+
+            const thisMonthIncompleteTasks = await db.tasks.findMany({
+                where: {
+                    projectId: projectId,
+                    status: {
+                        not: TaskStatus.DONE
+                    },
+                    dueDate: {
+                        gte: thisMonthStart.toISOString(),
+                        lte: thisMonthEnd.toISOString()
+                    }
+                }
+            });
+            
+            const lastMonthIncompleteTasks = await db.tasks.findMany({
+                where: {
+                    projectId: projectId,
+                    status: {
+                        not: TaskStatus.DONE
+                    },
+                    dueDate: {
+                        gte: lastMonthStart.toISOString(),
+                        lte: lastMonthEnd.toISOString()
+                    }
+                }
+            });
+
+            const incompleteTaskCount = thisMonthIncompleteTasks.length;
+            const incompleteTaskDifference = incompleteTaskCount - lastMonthIncompleteTasks.length;
+
+
+            const thisMonthCompletedTasks = await db.tasks.findMany({
+                where: {
+                    projectId: projectId,
+                    status: TaskStatus.DONE,
+                    dueDate: {
+                        gte: thisMonthStart.toISOString(),
+                        lte: thisMonthEnd.toISOString()
+                    }
+                }
+            });
+            
+            const lastMonthCompletedTasks = await db.tasks.findMany({
+                where: {
+                    projectId: projectId,
+                    status: TaskStatus.DONE,
+                    dueDate: {
+                        gte: lastMonthStart.toISOString(),
+                        lte: lastMonthEnd.toISOString()
+                    }
+                }
+            });
+
+            const completedTaskCount = thisMonthCompletedTasks.length;
+            const completedTaskDifference = completedTaskCount - lastMonthCompletedTasks.length;
+
+
+            const thisMonthOverdueTasks = await db.tasks.findMany({
+                where: {
+                    projectId: projectId,
+                    status: {
+                        not: TaskStatus.DONE
+                    },
+                    dueDate: {
+                        lt: now.toISOString(),
+                        gte: thisMonthStart.toISOString(),
+                        lte: thisMonthEnd.toISOString()
+                    }
+                }
+            });
+            
+            const lastMonthOverdueTasks = await db.tasks.findMany({
+                where: {
+                    projectId: projectId,
+                    status: {
+                        not: TaskStatus.DONE
+                    },
+                    dueDate: {
+                        lt: now.toISOString(),
+                        gte: lastMonthStart.toISOString(),
+                        lte: lastMonthEnd.toISOString()
+                    }
+                }
+            });
+
+            const overdueTasksCount = thisMonthOverdueTasks.length;
+            const overdueTasksDifference = overdueTasksCount - lastMonthOverdueTasks.length;
+
+
+            return c.json({
+                data: {
+                    taskCount,
+                    tasksDifference,
+                    assignedTaskCount,
+                    assignedTaskDifference,
+                    completedTaskCount,
+                    completedTaskDifference,
+                    incompleteTaskCount,
+                    incompleteTaskDifference,
+                    overdueTasksCount,
+                    overdueTasksDifference
+                }
+            }, 200);
 
         }
     )
