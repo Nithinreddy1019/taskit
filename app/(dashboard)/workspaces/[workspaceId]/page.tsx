@@ -1,10 +1,17 @@
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import { WorkspaceIdClient } from "./client";
 
 
-const WorkspaceIdPage = () => {
+const WorkspaceIdPage = async () => {
+
+    const session = await auth();
+    if(!session?.user) {
+        redirect("/sign-in");
+    }
+
     return (
-        <div>
-            Workspace Id
-        </div>
+        <WorkspaceIdClient />
     );
 }
  
