@@ -29,6 +29,7 @@ import { useLogin } from "../api/use-login";
 import { FiLoader } from "react-icons/fi";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
+import { signIn } from "next-auth/react";
 
 
 
@@ -132,6 +133,7 @@ export const SignInCard = () => {
                     <Button
                         className="w-full rounded-lg h-10"
                         variant="outline"
+                        onClick={() => signIn("google")}
                     >
                         <FcGoogle />
                         Sign in with Google
@@ -139,6 +141,7 @@ export const SignInCard = () => {
                     <Button
                         className="w-full rounded-lg h-10"
                         variant="outline"
+                        onClick={() => signIn("github")}
                     >
                         <FaGithub />
                         Sign in with Github

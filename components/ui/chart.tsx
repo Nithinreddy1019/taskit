@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import * as RechartsPrimitive from "recharts"
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   NameType,
   Payload,
@@ -73,6 +74,7 @@ const ChartContainer = React.forwardRef<
 ChartContainer.displayName = "Chart"
 
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
+  /* eslint-disable @typescript-eslint/no-empty-object-type */
   const colorConfig = Object.entries(config).filter(
     ([_, config]) => config.theme || config.color
   )
@@ -368,3 +370,4 @@ export {
   ChartLegendContent,
   ChartStyle,
 }
+/* eslint-disable @typescript-eslint/no-empty-object-type */

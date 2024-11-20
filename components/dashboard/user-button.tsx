@@ -1,9 +1,8 @@
 "use client"
 
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "../ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "../ui/dropdown-menu"
 import { UserAvatar } from "./user-avatar"
-import Link from "next/link";
-import { CheckIcon, LogOutIcon, MonitorIcon, MoonIcon, SunIcon, UserIcon } from "lucide-react";
+import { CheckIcon, LogOutIcon, MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 
@@ -19,13 +18,13 @@ export const UserButton = () => {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <button className="rounded-full">
-                    <UserAvatar avatarUrl={data?.user?.image!} size={40}/>
+                    <UserAvatar avatarUrl={data?.user?.image as string} size={40}/>
                 </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
                 <div className="w-60 h-24 flex flex-col gap-2 items-center justify-center p-2">
-                    <UserAvatar avatarUrl={data?.user?.image!} size={60}/>
-                    <p className="font-semibold">{data?.user?.name}</p>
+                    <UserAvatar avatarUrl={data?.user?.image as string} size={60}/>
+                    <p className="font-semibold">{data?.user?.name as string}</p>
                 </div>
                 <DropdownMenuSeparator />
 

@@ -1,6 +1,5 @@
 import Image from "next/image"
 import Link from "next/link"
-import { DottedSeparator } from "../dotted-separator"
 import { Separator } from "../ui/separator"
 import { Navigation } from "./navigation"
 import { WorkspaceSwitcher } from "./workspace-switcher"
@@ -9,7 +8,7 @@ import { Projects } from "./projects"
 
 export const Sidebar = () => {
     return (
-        <aside className="h-full w-full p-4 bg-secondary">
+        <aside className="h-full w-full p-4 border-r">
             <Link href={"/home"} className="flex items-center gap-3">
                 <Image 
                     src={"/logo.svg"}
@@ -23,15 +22,15 @@ export const Sidebar = () => {
                 </h2>
             </Link>
 
-            <DottedSeparator className="my-4"/>
+            <Separator className="my-4"/>
 
             <WorkspaceSwitcher />
 
-            <DottedSeparator className="my-4"/>
+            <div className="my-4"/>
 
             <Navigation />
 
-            <DottedSeparator className="my-4"/>
+            <Separator className="my-4"/>
 
             <Projects />
         </aside>

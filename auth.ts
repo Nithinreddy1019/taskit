@@ -1,5 +1,7 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google"
+import Github from "next-auth/providers/github"
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import * as bcrypt from "bcryptjs";
 
@@ -12,6 +14,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   session: { strategy: "jwt" },
   providers: [
     // WIP: Add OAuth
+    Google({  
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET
+    }),
+    Github({
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET
+    }),
     Credentials({
       async authorize(credentials) {
         const validatedFields = signInSchema.safeParse(credentials);
@@ -46,6 +56,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.id = token.sub
       }
       return session
+    },
+    async signIn({ profile, account }) {
+      if (account?.provider === "google" || account?.provider === "github") {
+        if (profile?.email) {
+          // Set emailVerified to true for OAuth providers
+          profile.emailVerified = true;
+          return true;
+        }
+      }
+      return true;
     }
   },
   pages: {

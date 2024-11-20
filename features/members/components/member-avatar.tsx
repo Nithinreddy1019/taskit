@@ -17,7 +17,7 @@ export const MemberAvatar = ({
     if(imageUrl) {
         return (
             <div className={cn(
-                "size-10 relative rounded-md overflow-hidden",
+                "size-10 relative rounded-lg overflow-hidden",
                 className,
             )}>
                 <Image 

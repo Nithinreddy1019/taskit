@@ -35,8 +35,8 @@ export const ProjectIdClient = () => {
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-x-2">
                     <ProjectAvatar 
-                        name={initialValues?.name!}
-                        imageUrl={initialValues?.image!}
+                        name={initialValues?.name as string}
+                        imageUrl={initialValues?.image as string}
                         className="size-12"
                         fallbackclassname="text-xl"
                     />
@@ -54,7 +54,7 @@ export const ProjectIdClient = () => {
                         size="sm"
                         variant="secondary"
                     >
-                        <Link href={`/workspaces/${initialValues?.workspaceId!}/projects/${initialValues?.id}/settings`}>
+                        <Link href={`/workspaces/${initialValues?.workspaceId as string}/projects/${initialValues?.id}/settings`}>
                             <Pencil className="size-2"/>
                             Edit
                         </Link>

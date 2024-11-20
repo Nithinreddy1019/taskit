@@ -22,7 +22,7 @@ export const UserAvatar = ({
                     alt="avatar"
                     height={size || 40}
                     width={size || 40}
-                    className={cn("aspect-square", className)}
+                    className={cn("aspect-square rounded-md", className)}
                 />
             )}
 

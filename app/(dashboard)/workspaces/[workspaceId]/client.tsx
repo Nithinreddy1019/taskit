@@ -12,13 +12,11 @@ import { MemberAvatar } from "@/features/members/components/member-avatar";
 import { useGetProjects } from "@/features/projects/api/use-get-projects";
 import { ProjectAvatar } from "@/features/projects/components/project-avatar";
 import { useCreateProjectModal } from "@/features/projects/hooks/use-create-project-modal";
-import { ProjectType } from "@/features/projects/types";
 import { useGetTasks } from "@/features/tasks/api/use-get-tasks";
 import { useCreateTaskModal } from "@/features/tasks/hooks/use-create-task-modal";
 import { TaskType } from "@/features/tasks/types";
 import { useGetWorkspaceAnalytics } from "@/features/workspaces/api/use-get-workspace-analytics";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id"
-import { MemberRole } from "@/features/workspaces/types";
 import { formatDistanceToNow } from "date-fns";
 import { CalendarIcon, PlusIcon, SettingsIcon } from "lucide-react";
 import Link from "next/link";
@@ -108,7 +106,7 @@ export const TaskList = ({
                     <Button
                         variant="muted"
                         size="icon"
-                        onClick={createTask}
+                        onClick={() => createTask}
                     >
                         <PlusIcon className="size-4"/>
                     </Button>
@@ -249,7 +247,6 @@ export const MembersList = ({
 }: MembersListProps) => {
     
     const workspaceId = useWorkspaceId();
-    const {open: createProject} = useCreateProjectModal();
 
     const handleCopy = (text: string) => {
         navigator.clipboard.writeText(text);

@@ -1,4 +1,3 @@
-import { AuthNav } from "../../features/auth/components/auth-nav";
 
 interface AuthLayoutProps {
     children: React.ReactNode;
