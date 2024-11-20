@@ -17,7 +17,6 @@ export const TaskIdClient = () => {
 
     const { data, isLoading } = useGetTask({ taskId });
 
-    // WIP: Make skeletons instead of loaderIcon
     if(isLoading) {
         return <PageLoader />
     };

@@ -18,11 +18,6 @@ const HomePage = async () => {
         redirect(`/workspaces/${data?.[0].id}`)
     }
 
-    return (
-        <div className="">
-            Home page
-        </div>
-    );
 }
  
 export default HomePage;
