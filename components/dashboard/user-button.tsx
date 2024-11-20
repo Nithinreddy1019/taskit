@@ -1,5 +1,6 @@
 "use client"
 
+import { useQueryClient } from "@tanstack/react-query";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "../ui/dropdown-menu"
 import { UserAvatar } from "./user-avatar"
 import { CheckIcon, LogOutIcon, MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
@@ -13,6 +14,8 @@ export const UserButton = () => {
 
    const { data } = useSession();
    const { theme, setTheme } = useTheme();
+
+   const queryClient = useQueryClient()
 
     return (
         <DropdownMenu>
@@ -56,7 +59,8 @@ export const UserButton = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                     onClick={() => {{
-                        signOut()
+                        signOut();
+                        queryClient.invalidateQueries()
                     }}}
                 >
                     <LogOutIcon className="size-5 mr-2"/>

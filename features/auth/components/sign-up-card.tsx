@@ -30,6 +30,7 @@ import { useRegister } from "../api/use-register";
 import { FiLoader } from "react-icons/fi";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
+import { signIn } from "next-auth/react";
 
 
 export const SignUpCard = () => {
@@ -157,6 +158,7 @@ export const SignUpCard = () => {
                     <Button
                         className="w-full rounded-lg h-10"
                         variant="outline"
+                        onClick={() => signIn("google")}
                     >
                         <FcGoogle />
                         Sign in with Google
@@ -164,6 +166,7 @@ export const SignUpCard = () => {
                     <Button
                         className="w-full rounded-lg h-10"
                         variant="outline"
+                        onClick={() => signIn("github")}
                     >
                         <FaGithub />
                         Sign in with Github

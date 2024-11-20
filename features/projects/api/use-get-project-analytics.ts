@@ -17,7 +17,7 @@ export const useGetProjectAnalytics = ({
     projectId
 }: useGetProjectAnalyticsProps) => {
     const query = useQuery({
-        queryKey: ["project_analytics", projectId],
+        queryKey: ["project-analytics", projectId],
         queryFn: async () => {
             const response = await client.api.projects[":projectId"]["analytics"].$get({
                 param: { projectId }
