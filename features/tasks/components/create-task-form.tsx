@@ -45,13 +45,15 @@ interface CreateTaskFormProps {
     onCancel?: () => void,
     projectOptions: { id: string, name: string | null, image: string | null }[],
     memberOptions: { id: string, name: string | null, image: string | null}[],
+    defaultStatus: TaskStatus
 };
 
 
 export const CreateTaskForm = ({
     onCancel,
     projectOptions,
-    memberOptions
+    memberOptions,
+    defaultStatus
 }: CreateTaskFormProps) => {
 
     const workspaceId = useWorkspaceId();
@@ -63,6 +65,7 @@ export const CreateTaskForm = ({
         resolver: zodResolver(createTaskSchema.omit({ workspaceId: true })),
         defaultValues: {
             workspaceId,
+            status: defaultStatus ?? null
         }
     });
 

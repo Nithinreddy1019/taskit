@@ -13,20 +13,20 @@ import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CreateTaskForm } from "./create-task-form";
+import { TaskStatus } from "../types";
 
 
 
 interface CreateTaskFormWrapperProps {
     onCancel: () => void,
+    defaultStatus: TaskStatus
 }
 
 
 export const CreateTaskFormWrapper = ({
     onCancel,
+    defaultStatus
 }: CreateTaskFormWrapperProps) => {
-    
-    const params = useParams()
-    // Add similar hook to get projectID
 
     const workspaceId = useWorkspaceId()
 
@@ -71,6 +71,7 @@ export const CreateTaskFormWrapper = ({
             onCancel={onCancel} 
             projectOptions={projectOptions ?? []} 
             memberOptions={memberOptions ?? []}
+            defaultStatus={defaultStatus as TaskStatus}
         />
     )
 }
