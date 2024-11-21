@@ -37,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={cn(inter.className, "antialiased")}
+        className={cn(inter.className, "antialiased font-sans")}
       >
         <NuqsAdapter>
           <SessionProvider>

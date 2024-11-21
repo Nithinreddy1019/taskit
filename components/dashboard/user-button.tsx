@@ -59,7 +59,7 @@ export const UserButton = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                     onClick={() => {{
-                        signOut();
+                        signOut({redirect: true, callbackUrl:"/"});
                         queryClient.invalidateQueries()
                     }}}
                 >

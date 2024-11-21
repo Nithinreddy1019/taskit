@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import logoSource from "@/public/logo.svg";
 import { ButtonLanding } from "./button-landing";
+import Link from "next/link";
 
 const navLinks = [
     { label: "Home", href:"#" },
@@ -47,7 +48,9 @@ export const Navbar = () => {
                         </svg>
 
                         <ButtonLanding variant="secondary" className="hidden md:inline-flex items-center">
-                            Log in
+                            <Link href={"/sign-in"}>
+                                Log in
+                            </Link>
                         </ButtonLanding>
                         <ButtonLanding variant="primary" className="hidden md:inline-flex items-center">
                             Sign up

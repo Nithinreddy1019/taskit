@@ -10,6 +10,14 @@ const config: Config = {
 	"./hooks/**/*.{js,ts,jsx,tsx,mdx}"
   ],
   theme: {
+	container: {
+		center: true,
+		padding: {
+			DEFAULT: "1rem",
+			md: "2rem",
+			lg: "4rem"
+		}
+	},
   	extend: {
   		colors: {
   			background: 'hsl(var(--background))',
