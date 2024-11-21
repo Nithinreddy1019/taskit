@@ -58,9 +58,9 @@ export const UserButton = () => {
                 </DropdownMenuSub>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                    onClick={() => {{
-                        signOut({redirect: true, callbackUrl:"/"});
-                        queryClient.invalidateQueries()
+                    onClick={async () => {{
+                        await signOut({redirect: true, callbackUrl:"/"});
+                        queryClient.invalidateQueries();
                     }}}
                 >
                     <LogOutIcon className="size-5 mr-2"/>
