@@ -12,7 +12,6 @@
     "@auth/prisma-adapter": "^2.7.2",
     "@aws-sdk/client-s3": "^3.679.0",
     "@aws-sdk/s3-request-presigner": "^3.679.0",
-    "@dotlottie/react-player": "^1.6.19",
     "@hello-pangea/dnd": "^17.0.0",
     "@hono/zod-validator": "^0.4.1",
     "@hookform/resolvers": "^3.9.0",

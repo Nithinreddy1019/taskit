@@ -48,12 +48,14 @@ export const Navbar = () => {
                         </svg>
 
                         <ButtonLanding variant="secondary" className="hidden md:inline-flex items-center">
-                            <Link href={"/sign-in"}>
+                            <Link href={"/sign-in"} className="w-full h-full flex items-center">
                                 Log in
                             </Link>
                         </ButtonLanding>
                         <ButtonLanding variant="primary" className="hidden md:inline-flex items-center">
-                            Sign up
+                            <Link href={"sign-up"} className="w-full h-full flex items-center">
+                                Sign up
+                            </Link>
                         </ButtonLanding>
                     </div>
                 </div>

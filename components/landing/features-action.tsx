@@ -1,27 +1,27 @@
 "use client"
 
 import { ComponentPropsWithoutRef, useEffect, useRef, useState } from "react";
-import { DotLottieCommonPlayer, DotLottiePlayer } from "@dotlottie/react-player";
 import { animate, motion, useMotionTemplate, useMotionValue, ValueAnimationTransition } from "motion/react";
 import productImage from "@/assets/features.png";
+import { LayoutDashboardIcon, MousePointer2Icon, SparklesIcon } from "lucide-react";
 
 const tabs = [
     {
-        icon: "/lottie/vroom.lottie",
+        icon: LayoutDashboardIcon,
         title: "User friendly dashboard",
         backgroundPositionX: 0,
         backgroundPositionY: 5,
         backgroundSizeX: 150
     },
     {
-        icon: "/lottie/click.lottie",
+        icon: MousePointer2Icon,
         title: "Kanban board",
         backgroundPositionX: 80,
         backgroundPositionY: 100,
         backgroundSizeX: 135
     },
     {
-        icon: "/lottie/stars.lottie",
+        icon: SparklesIcon,
         title: "Views & filters",
         backgroundPositionX: 15,
         backgroundPositionY: 27,
@@ -94,8 +94,9 @@ export const FeaturesAction = () => {
 
 const FeaturesTab = (props: typeof tabs[number] & ComponentPropsWithoutRef<'div'> & { selected: boolean }) => {
 
+    const Icon = props.icon;
+
     const tabRef = useRef<HTMLDivElement>(null);
-    const dotLottieRef = useRef<DotLottieCommonPlayer>(null);
 
     const xPercentage = useMotionValue(0);
     const yPercentage = useMotionValue(0);
@@ -125,19 +126,12 @@ const FeaturesTab = (props: typeof tabs[number] & ComponentPropsWithoutRef<'div'
         animate(yPercentage, [0, 0, 100, 100, 0], options);
     }, [props.selected]);
 
-    const handleTabHover = () => {
-        if(dotLottieRef.current === null) return;
-
-        dotLottieRef.current.seek(0);
-        dotLottieRef.current.play();
-    }
 
     return (
         <div
             ref={tabRef}
             onClick={props.onClick}
             className="border border-white/10 flex items-center lg:flex-1 rounded-lg p-2 gap-2 bg-neutral-950 relative"
-            onMouseEnter={handleTabHover}
         >
             {props.selected && (
                 <motion.div 
@@ -149,12 +143,7 @@ const FeaturesTab = (props: typeof tabs[number] & ComponentPropsWithoutRef<'div'
                 </motion.div>
             )}
             <div className="h-10 w-10 border border-white/10 rounded-lg inline-flex items-center justify-center  bg-gradient-to-bl from-indigo-500 to-blue-500">
-                <DotLottiePlayer 
-                    src={props.icon}
-                    className="size-5"
-                    autoplay
-                    ref={dotLottieRef}
-                />
+                <Icon className="size-5 stroke-2"/>
             </div>
             <div className="font-medium">{props.title}</div>
         </div>
