@@ -41,9 +41,7 @@ jobs:
           sudo docker pull nithineddy/taskit:latest
           sudo docker stop taskit-app-run || true
           sudo docker rm taskit-app-run || true
-          sudo docker run -d \
-            --name taskit-app-run \
-            -p 3005:3000 \
+          sudo docker run -d --name taskit-app-run -p 3005:3000 \
             -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
             -e DIRECT_URL=${{ secrets.DIRECT_URL }} \
             -e BUCKET_REGION=${{ secrets.BUCKET_REGION }} \
