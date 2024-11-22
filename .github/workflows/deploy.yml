@@ -56,6 +56,5 @@ jobs:
             -e NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }} \
             -e NEXTAUTH_URL=${{secrets.NEXTAUTH_URL}} \
             -e NEXTAUTH_URL_INTERNAL=${{secrets.NEXTAUTH_URL_INTERNAL}} \
-            # -e NEXTAUTH_TRUST_HOST=${{secrets.NEXTAUTH_TRUST_HOST}} \
             -e AUTH_TRUST_HOST=${{secrets.AUTH_TRUST_HOST}} \
             nithineddy/taskit:latest
