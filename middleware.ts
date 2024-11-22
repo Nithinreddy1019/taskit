@@ -1,7 +1,7 @@
 import { auth } from "@/auth"
 import { ApiAuthRoute, AuthRoutes, DEFAULT_LOGIN_REDIRECT, publicRoutes } from "./routes";
 
-export default auth((req) => {
+export default auth((req: { auth?: any; nextUrl?: any; }) => {
     const { nextUrl } = req;
     const isLoggedin = !!req.auth;
 
@@ -9,6 +9,7 @@ export default auth((req) => {
     const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
     const isAuthRoute = AuthRoutes.includes(nextUrl.pathname);
     const isAuthApiRoute = nextUrl.pathname.startsWith(ApiAuthRoute);
+
 
     if(isAuthApiRoute) return;
 
