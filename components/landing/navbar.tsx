@@ -57,10 +57,6 @@ export const Navbar = () => {
                                 Sign up
                             </Link>
                         </ButtonLanding>
-                        {/* Small change to chek CI */}
-                        {/* second change to check CI */}
-                        {/* change to ckeck CD */}
-                        {/* checking deploy to EC2 */}
                     </div>
                 </div>
             </div>
