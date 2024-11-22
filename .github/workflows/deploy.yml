@@ -30,3 +30,33 @@ jobs:
 
     - name: verify pushed image
       run: docker pull nithineddy/taskit:latest
+
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          sudo docker pull nithineddy/taskit@latest
+          sudo docker stop taskit || true
+          sudo docker rm taskit || true
+          sudo docker run -d \
+            --name taskit-app-run \
+            -p 3005:3000 \
+            -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
+            -e DIRECT_URL=${{ secrets.DIRECT_URL }} \
+            -e BUCKET_REGION={{ secrets.BUCKET_REGION }} \
+            -e BUCKET_NAME={{ secrets.BUCKET_NAME }} \
+            -e ACCESS_KEY=${{ secrets.ACCESS_KEY }} \
+            -e SECRET_ACCESS_KEY=${{ secrets.SECRET_ACCESS_KEY }} \
+            -e AUTH_GITHUB_CLIENT_ID=${{ secrets.AUTH_GITHUB_CLIENT_ID }} \
+            -e AUTH_GITHUB_CLIENT_SECRET=${{ secrets.AUTH_GITHUB_CLIENT_SECRET }} \
+            -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
+            -e GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
+            -e AUTH_SECRET=${{ secrets.AUTH_SECRET }} \
+            -e NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }} \
+            -e NEXTAUTH_URL=${{secrets.NEXTAUTH_URL}} \
+            -e NEXTAUTH_URL_INTERNAL=${{secrets.NEXTAUTH_URL_INTERNAL}} \
+            -e NEXTAUTH_TRUST_HOST=${{secrets.NEXTAUTH_TRUST_HOST}} \
+            nithineddy/taskit:latest
