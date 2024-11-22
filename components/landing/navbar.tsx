@@ -59,6 +59,7 @@ export const Navbar = () => {
                         </ButtonLanding>
                         {/* Small change to chek CI */}
                         {/* second change to check CI */}
+                        {/* change to ckeck CD */}
                     </div>
                 </div>
             </div>
