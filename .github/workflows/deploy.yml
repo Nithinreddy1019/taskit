@@ -38,16 +38,16 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          sudo docker pull nithineddy/taskit@latest
-          sudo docker stop taskit || true
-          sudo docker rm taskit || true
+          sudo docker pull nithineddy/taskit:latest
+          sudo docker stop taskit-app-run || true
+          sudo docker rm taskit-app-run || true
           sudo docker run -d \
             --name taskit-app-run \
             -p 3005:3000 \
             -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
             -e DIRECT_URL=${{ secrets.DIRECT_URL }} \
-            -e BUCKET_REGION={{ secrets.BUCKET_REGION }} \
-            -e BUCKET_NAME={{ secrets.BUCKET_NAME }} \
+            -e BUCKET_REGION=${{ secrets.BUCKET_REGION }} \
+            -e BUCKET_NAME=${{ secrets.BUCKET_NAME }} \
             -e ACCESS_KEY=${{ secrets.ACCESS_KEY }} \
             -e SECRET_ACCESS_KEY=${{ secrets.SECRET_ACCESS_KEY }} \
             -e AUTH_GITHUB_CLIENT_ID=${{ secrets.AUTH_GITHUB_CLIENT_ID }} \
