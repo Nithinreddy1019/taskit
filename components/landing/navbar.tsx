@@ -58,6 +58,7 @@ export const Navbar = () => {
                             </Link>
                         </ButtonLanding>
                         {/* Small change to chek CI */}
+                        {/* second change to check CI */}
                     </div>
                 </div>
             </div>

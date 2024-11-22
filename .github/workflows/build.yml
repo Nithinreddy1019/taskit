@@ -22,5 +22,5 @@ jobs:
       - name: Generate prisma client
         run: npm run db:generate
 
-      - name: Ru build
+      - name: Run build
         run: npm run build
