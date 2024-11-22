@@ -57,6 +57,7 @@ export const Navbar = () => {
                                 Sign up
                             </Link>
                         </ButtonLanding>
+                        {/* Small change to chek CI */}
                     </div>
                 </div>
             </div>
