@@ -104,7 +104,7 @@ export const TaskViewSwitcher = ({
                         variant="default"
                         size="sm"
                         className="w-full lg:w-auto"
-                        onClick={() => open}
+                        onClick={() => open({status: null})}
                     >
                         <PlusIcon className="size-4"/>
                         New task

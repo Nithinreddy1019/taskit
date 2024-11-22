@@ -15,7 +15,7 @@ export const useCreateTaskModal = () => {
         parseAsString.withDefault("").withOptions({ clearOnDefault: true })
     );
 
-    const open = ({status: newStatus}: {status: TaskStatus}) => {
+    const open = ({status: newStatus}: {status: TaskStatus | null}) => {
         setIsOpen(true);
         setStatus(newStatus);
     }
