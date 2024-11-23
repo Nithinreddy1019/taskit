@@ -81,7 +81,8 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
         script: |
-          source ~/.profile 
+          source ~/.profile
+          export PATH=$PATH:/usr/local/bin:/usr/bin 
           cd /var/www/nextjs-app
           npm install --production
           pm2 restart nextjs-app || pm2 start npm --name nextjs-app -- start
