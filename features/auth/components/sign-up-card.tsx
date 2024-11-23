@@ -153,7 +153,7 @@ export const SignUpCard = () => {
                     <p className="absolute top-1/2 -translate-y-1/2 bg-white dark:bg-[#141414] px-2 text-muted-foreground">Or authorize with</p>
                 </div>
 
-                <div className="flex items-center gap-x-4">
+                <div className="space-y-2">
 
                     <Button
                         className="w-full rounded-lg h-10"

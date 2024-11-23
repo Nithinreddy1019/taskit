@@ -10,6 +10,7 @@ import { signInSchema } from "./features/auth/schemas/signin-schema";
 
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost: true,
   adapter: PrismaAdapter(db),
   session: { strategy: "jwt" },
   providers: [
