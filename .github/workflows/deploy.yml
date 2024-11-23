@@ -52,11 +52,25 @@ jobs:
         mkdir -p ~/.ssh
         ssh-keyscan -H ${{secrets.SSH_HOST}} >> ~/.ssh/known_hosts
 
+
+    - name: Execute remote SSH commands to prepare directory
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+          sudo mkdir -p /var/www/nextjs-app
+          sudo chown ${{ secrets.EC2_USERNAME }}:${{ secrets.EC2_USERNAME }} /var/www/nextjs-app
+
+
+
     - name: Deploy to EC2
       run: |
         rsync -avz --delete \
         -e "ssh -p ${{secrets.SSH_PORT}}" \
-        .next package.json package-lock.json public assets next.config.js \
+        .next package.json package-lock.json public assets next.config.mjs \
         ${{secrets.SSH_USERNAME}}@${{secrets.SSH_HOST}}:/var/www/nextjs-app
 
     - name: Execute remote SSH commands
