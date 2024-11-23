@@ -1,30 +1,30 @@
-name: Build and deploy to docker
-
+name: Build and Deploy to EC2
 
 on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: checkout code
-      uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-    - name: Setup NodeJs
-      uses: actions/setup-node@v2
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
       with:
-        node-version: "22"
+        node-version: '18.x'  # Changed to 18.x for compatibility with Next.js
 
     - name: Install dependencies
       run: npm install
-    
-    - name: Generate prisma client
+
+    - name: Generate Prisma client
       run: npm run db:generate
 
-    - name: build application
+    - name: Build application
       run: npm run build
       env:
         NEXT_PUBLIC_APP_URL: ${{secrets.NEXT_PUBLIC_APP_URL}}
@@ -41,9 +41,9 @@ jobs:
         AUTH_SECRET: ${{secrets.AUTH_SECRET}}
         AUTH_TRUST_HOST: ${{secrets.AUTH_TRUST_HOST}}
         NEXTAUTH_URL: ${{secrets.NEXTAUTH_URL}}
-      
+
     - name: Install SSH key
-      uses: webfactory/ssh-agent@v0.5.4
+      uses: webfactory/ssh-agent@v0.8.0
       with:
         ssh-private-key: ${{secrets.SSH_KEY}}
 
@@ -52,8 +52,7 @@ jobs:
         mkdir -p ~/.ssh
         ssh-keyscan -H ${{secrets.SSH_HOST}} >> ~/.ssh/known_hosts
 
-
-    - name: Execute remote SSH commands to prepare directory
+    - name: Prepare EC2 environment
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
@@ -61,19 +60,53 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
         script: |
+          # Create directory if it doesn't exist
           sudo mkdir -p /var/www/nextjs-app
           sudo chown ${{ secrets.SSH_USERNAME }}:${{ secrets.SSH_USERNAME }} /var/www/nextjs-app
-
-
+          
+          # Install Node.js 18
+          curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          
+          # Install PM2 globally
+          sudo npm install -g pm2
+          
+          # Create ecosystem file if it doesn't exist
+          if [ ! -f /var/www/nextjs-app/ecosystem.config.js ]; then
+            echo "module.exports = {
+              apps: [{
+                name: 'nextjs-app',
+                script: 'npm',
+                args: 'start',
+                env: {
+                  NODE_ENV: 'production',
+                  NEXT_PUBLIC_APP_URL: '${{secrets.NEXT_PUBLIC_APP_URL}}',
+                  BUCKET_REGION: '${{secrets.BUCKET_REGION}}',
+                  BUCKET_NAME: '${{secrets.BUCKET_NAME}}',
+                  ACCESS_KEY: '${{secrets.ACCESS_KEY}}',
+                  SECRET_ACCESS_KEY: '${{secrets.SECRET_ACCESS_KEY}}',
+                  AUTH_GITHUB_CLIENT_ID: '${{secrets.AUTH_GITHUB_CLIENT_ID}}',
+                  AUTH_GITHUB_CLIENT_SECRET: '${{secrets.AUTH_GITHUB_CLIENT_SECRET}}',
+                  GOOGLE_CLIENT_ID: '${{secrets.GOOGLE_CLIENT_ID}}',
+                  GOOGLE_CLIENT_SECRET: '${{secrets.GOOGLE_CLIENT_SECRET}}',
+                  DATABASE_URL: '${{secrets.DATABASE_URL}}',
+                  DIRECT_URL: '${{secrets.DIRECT_URL}}',
+                  AUTH_SECRET: '${{secrets.AUTH_SECRET}}',
+                  AUTH_TRUST_HOST: '${{secrets.AUTH_TRUST_HOST}}',
+                  NEXTAUTH_URL: '${{secrets.NEXTAUTH_URL}}'
+                }
+              }]
+            }" > /var/www/nextjs-app/ecosystem.config.js
+          fi
 
     - name: Deploy to EC2
       run: |
         rsync -avz --delete \
         -e "ssh -p ${{secrets.SSH_PORT}}" \
-        .next package.json package-lock.json public assets next.config.mjs \
+        .next package.json package-lock.json public assets next.config.mjs ecosystem.config.js \
         ${{secrets.SSH_USERNAME}}@${{secrets.SSH_HOST}}:/var/www/nextjs-app
 
-    - name: Execute remote SSH commands
+    - name: Start application
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
@@ -81,9 +114,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
         script: |
-          curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
-          sudo apt-get install -y nodejs
-          sudo npm install -g pm2
           cd /var/www/nextjs-app
           npm install --production
-          pm2 restart nextjs-app || pm2 start npm --name nextjs-app -- start
+          pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
+          pm2 save
