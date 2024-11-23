@@ -62,7 +62,7 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         script: |
           sudo mkdir -p /var/www/nextjs-app
-          sudo chown ${{ secrets.EC2_USERNAME }}:${{ secrets.EC2_USERNAME }} /var/www/nextjs-app
+          sudo chown ${{ secrets.SSH_USERNAME }}:${{ secrets.SSH_USERNAME }} /var/www/nextjs-app
 
 
 
