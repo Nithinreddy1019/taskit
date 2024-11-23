@@ -81,8 +81,9 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
         script: |
-          source ~/.profile
-          export PATH=$PATH:/usr/local/bin:/usr/bin 
+          curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          sudo apm install -g pm2
           cd /var/www/nextjs-app
           npm install --production
           pm2 restart nextjs-app || pm2 start npm --name nextjs-app -- start
